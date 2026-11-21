@@ -59,14 +59,20 @@ def clean(src, dst, box_in=BOX_IN):
     g = cv2.GaussianBlur(g, (3, 3), 0)                # smooth jaggies before re-threshold
     ink = g < 128
 
-    # normalise line weight
+    # normalise line weight: redraw every stroke at TARGET width from its centre line,
+    # so thick outer lines get thinner and thin inner lines get thicker (no lines lost).
+    # Solid black areas (pupils, nostrils) wider than a stroke are kept as they are.
     before = stroke_width(ink)
-    diff = TARGET_STROKE_PX - before
-    r = int(round(abs(diff) / 2))
-    if r >= 1:
-        kk = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
-        op = cv2.dilate if diff > 0 else cv2.erode
-        ink = op(ink.astype(np.uint8), kk).astype(bool)
+    from skimage.morphology import skeletonize
+    skel = skeletonize(ink)
+    kk = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (TARGET_STROKE_PX, TARGET_STROKE_PX))
+    lines = cv2.dilate(skel.astype(np.uint8), kk).astype(bool)
+    d = int(max(before, TARGET_STROKE_PX) * 2.4) | 1   # bigger than any line junction
+    blobs = cv2.morphologyEx(ink.astype(np.uint8), cv2.MORPH_OPEN,
+                             cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (d, d))).astype(bool)
+    ink = lines | blobs
+    g = cv2.GaussianBlur(np.where(ink, 0, 255).astype(np.uint8), (7, 7), 0)   # smooth skeleton wobble
+    ink = g < 128
     after = stroke_width(ink)
 
     # report: interior regions and fiddly ones (< 0.2" x 0.2" area)

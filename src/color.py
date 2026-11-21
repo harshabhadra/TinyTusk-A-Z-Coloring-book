@@ -58,6 +58,11 @@ def fill(clean_path, spec_path, dst):
         for fx, fy in pts:
             x, y = int(fx * w), int(fy * h)
             i = lab[y, x]
+            if i == 0:                                   # on a line: snap to nearest region within 25 px
+                ys, xs = np.nonzero(lab[max(0, y - 25):y + 26, max(0, x - 25):x + 26] > 0)
+                if ys.size:
+                    k = np.argmin((ys - min(y, 25)) ** 2 + (xs - min(x, 25)) ** 2)
+                    i = lab[max(0, y - 25) + ys[k], max(0, x - 25) + xs[k]]
             if i == 0 or i not in interior:
                 sys.exit(f"seed {fx},{fy} for {color} is on a line or outside the animal")
             assign[i] = color

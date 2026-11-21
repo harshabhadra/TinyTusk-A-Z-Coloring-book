@@ -1,0 +1,16 @@
+{
+  "src": "raw/A_alligator_v1.png",
+  "size_px": [
+    1676,
+    1890
+  ],
+  "size_in": [
+    5.59,
+    6.3
+  ],
+  "stroke_px_before": 23.2,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 47,
+  "tiny_regions": 24
+}
