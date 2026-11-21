@@ -1,0 +1,100 @@
+"""Step 5.1-5.3: raw AI line art -> clean pure black/white line art sized for the drawing area.
+
+Usage: python3 src/clean.py raw/A_alligator_v1.png clean/A.png [--box W H]
+Writes the PNG (1-bit, 300 dpi) and a .json report next to it.
+"""
+import argparse, json, sys
+import numpy as np
+import cv2
+
+DPI = 300
+TARGET_STROKE_PX = 14      # ~3.4 pt at 300 dpi (brief: 3-4 pt)
+BOX_IN = (6.8, 6.3)        # drawing area, inches (see layout.py)
+
+
+def remove_small(mask, min_area):
+    """Drop connected components of `mask` (bool) smaller than min_area px."""
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(mask.astype(np.uint8), connectivity=8)
+    keep = np.zeros(n, bool)
+    keep[1:] = stats[1:, cv2.CC_STAT_AREA] >= min_area
+    return keep[lab]
+
+
+def stroke_width(ink):
+    """Median full stroke width in px, measured along the stroke centre lines."""
+    dist = cv2.distanceTransform(ink.astype(np.uint8), cv2.DIST_L2, 5)
+    # local maxima of the distance map approximate the skeleton
+    dil = cv2.dilate(dist, np.ones((3, 3), np.uint8))
+    ridge = (dist > 0.5) & (dist >= dil - 1e-6)
+    vals = dist[ridge]
+    return float(2 * np.median(vals)) if vals.size else 0.0
+
+
+def clean(src, dst, box_in=BOX_IN):
+    img = cv2.imread(src, cv2.IMREAD_UNCHANGED)
+    if img is None:
+        sys.exit(f"cannot read {src}")
+    if img.ndim == 3 and img.shape[2] == 4:          # transparent PNG -> white bg
+        a = img[:, :, 3:4] / 255.0
+        img = (img[:, :, :3] * a + 255 * (1 - a)).astype(np.uint8)
+    gray = img if img.ndim == 2 else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # 1. threshold + specks
+    ink = gray < 150
+    ink = remove_small(ink, 60)                       # black specks
+    holes = remove_small(~ink, 40)                    # tiny white pinholes inside lines
+    ink = ~holes
+
+    # 2. close small gaps in outlines
+    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+    ink = cv2.morphologyEx(ink.astype(np.uint8), cv2.MORPH_CLOSE, k).astype(bool)
+
+    # 3. crop to drawing, scale to fit the box
+    ys, xs = np.nonzero(ink)
+    ink = ink[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    bw, bh = int(box_in[0] * DPI), int(box_in[1] * DPI)
+    s = min(bw / ink.shape[1], bh / ink.shape[0])
+    new = (round(ink.shape[1] * s), round(ink.shape[0] * s))
+    g = cv2.resize((~ink).astype(np.uint8) * 255, new, interpolation=cv2.INTER_AREA if s < 1 else cv2.INTER_CUBIC)
+    g = cv2.GaussianBlur(g, (3, 3), 0)                # smooth jaggies before re-threshold
+    ink = g < 128
+
+    # normalise line weight
+    before = stroke_width(ink)
+    diff = TARGET_STROKE_PX - before
+    r = int(round(abs(diff) / 2))
+    if r >= 1:
+        kk = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
+        op = cv2.dilate if diff > 0 else cv2.erode
+        ink = op(ink.astype(np.uint8), kk).astype(bool)
+    after = stroke_width(ink)
+
+    # report: interior regions and fiddly ones (< 0.2" x 0.2" area)
+    white = (~ink).astype(np.uint8)
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(white, connectivity=4)
+    h, w = ink.shape
+    border_labels = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]])))
+    tiny_px = (0.2 * DPI) ** 2
+    interior = [i for i in range(1, n) if i not in border_labels]
+    tiny = [i for i in interior if stats[i, cv2.CC_STAT_AREA] < tiny_px]
+
+    out = np.where(ink, 0, 255).astype(np.uint8)
+    cv2.imwrite(dst, out)
+    from PIL import Image
+    Image.open(dst).convert("1").save(dst, dpi=(DPI, DPI))
+    rep = {
+        "src": src, "size_px": [w, h], "size_in": [round(w / DPI, 2), round(h / DPI, 2)],
+        "stroke_px_before": round(before, 1), "stroke_px_after": round(after, 1),
+        "stroke_pt_after": round(after / DPI * 72, 2),
+        "interior_regions": len(interior), "tiny_regions": len(tiny),
+    }
+    json.dump(rep, open(dst.rsplit(".", 1)[0] + ".json", "w"), indent=2)
+    return rep
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("src"); ap.add_argument("dst")
+    ap.add_argument("--box", nargs=2, type=float, default=BOX_IN)
+    a = ap.parse_args()
+    print(json.dumps(clean(a.src, a.dst, tuple(a.box)), indent=2))
