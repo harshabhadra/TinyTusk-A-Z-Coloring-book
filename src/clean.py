@@ -63,6 +63,7 @@ def clean(src, dst, box_in=BOX_IN):
     # so thick outer lines get thinner and thin inner lines get thicker (no lines lost).
     # Solid black areas (pupils, nostrils) wider than a stroke are kept as they are.
     before = stroke_width(ink)
+    orig_ink = ink.copy()
     from skimage.morphology import skeletonize
     skel = skeletonize(ink)
     kk = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (TARGET_STROKE_PX, TARGET_STROKE_PX))
@@ -71,6 +72,17 @@ def clean(src, dst, box_in=BOX_IN):
     blobs = cv2.morphologyEx(ink.astype(np.uint8), cv2.MORPH_OPEN,
                              cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (d, d))).astype(bool)
     ink = lines | blobs
+    # inside solid black areas (incl. their white highlight holes) use the original pixels,
+    # so eye highlights keep their round shape
+    from scipy.ndimage import binary_fill_holes
+    near_blobs = cv2.dilate(binary_fill_holes(blobs).astype(np.uint8), np.ones((7, 7), np.uint8)).astype(bool)
+    ink = np.where(near_blobs, orig_ink, ink)
+    # separate black shapes that are mostly solid (pupils, nostrils) are copied unchanged
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(orig_ink.astype(np.uint8), connectivity=8)
+    solid = np.bincount(lab[blobs], minlength=n) / np.maximum(stats[:, cv2.CC_STAT_AREA], 1)
+    keep = solid > 0.5
+    keep[0] = False
+    ink = (ink & ~keep[lab]) | (orig_ink & keep[lab])
     g = cv2.GaussianBlur(np.where(ink, 0, 255).astype(np.uint8), (7, 7), 0)   # smooth skeleton wobble
     ink = g < 128
     after = stroke_width(ink)

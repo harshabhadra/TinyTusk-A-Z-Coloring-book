@@ -4,6 +4,7 @@ Spec file specs/A.json:
 {
   "animal": "Alligator",
   "default": "Light green",          # every interior region not listed below (or null = stay white)
+  "close": [[x1, y1, x2, y2]],       # optional: extra line segments drawn onto clean/A.png to close open outlines
   "fills": {                         # seed points as fractions of image width/height
     "Yellow": [[0.50, 0.70]],
     "white":  [[0.40, 0.30], [0.60, 0.30]]   # eye whites etc. stay white
@@ -11,7 +12,7 @@ Spec file specs/A.json:
 }
 
 Usage:
-  python3 src/color.py regions clean/A.png              -> clean/A_regions.png (numbered map for picking seeds)
+  python3 src/color.py regions clean/A.png [specs/A.json] -> clean/A_regions.png (numbered map; applies "close" first)
   python3 src/color.py fill clean/A.png specs/A.json colored/A.png
 Writes colored/A.png and colored/A.json  {"colors_used": [...]} (used for the "Check your colors" dots).
 """
@@ -49,8 +50,19 @@ def regions(clean_path):
     im.save(dst); print(dst, f"({len(interior)} regions)")
 
 
+def close_gaps(clean_path, segments, width=15):
+    """Draw short line segments onto the clean art (in place) so open outlines become closed regions."""
+    im = np.array(Image.open(clean_path).convert("L"))
+    h, w = im.shape
+    for x1, y1, x2, y2 in segments:
+        cv2.line(im, (round(x1 * w), round(y1 * h)), (round(x2 * w), round(y2 * h)), 0, width, cv2.LINE_AA)
+    Image.fromarray(np.where(im < 128, 0, 255).astype(np.uint8)).convert("1").save(clean_path, dpi=(300, 300))
+
+
 def fill(clean_path, spec_path, dst):
     spec = json.load(open(spec_path))
+    if spec.get("close"):
+        close_gaps(clean_path, spec["close"])
     ink, lab, stats, cent, interior = labels(clean_path)
     h, w = ink.shape
     assign = {}
@@ -82,6 +94,10 @@ def fill(clean_path, spec_path, dst):
 
 if __name__ == "__main__":
     if sys.argv[1] == "regions":
+        if len(sys.argv) > 3:
+            sp = json.load(open(sys.argv[3]))
+            if sp.get("close"):
+                close_gaps(sys.argv[2], sp["close"])
         regions(sys.argv[2])
     else:
         fill(*sys.argv[2:5])
