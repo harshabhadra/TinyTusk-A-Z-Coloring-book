@@ -30,7 +30,7 @@ def stroke_width(ink):
     return float(2 * np.median(vals)) if vals.size else 0.0
 
 
-def clean(src, dst, box_in=BOX_IN):
+def clean(src, dst, box_in=BOX_IN, solid_boxes=()):
     img = cv2.imread(src, cv2.IMREAD_UNCHANGED)
     if img is None:
         sys.exit(f"cannot read {src}")
@@ -71,6 +71,21 @@ def clean(src, dst, box_in=BOX_IN):
     d = int(max(before, TARGET_STROKE_PX) * 2.4) | 1   # bigger than any line junction
     blobs = cv2.morphologyEx(ink.astype(np.uint8), cv2.MORPH_OPEN,
                              cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (d, d))).astype(bool)
+    # thick line junctions survive the opening as small lumps: drop shapes smaller than ~d x d
+    n, lab, st, _ = cv2.connectedComponentsWithStats(blobs.astype(np.uint8), connectivity=8)
+    small = np.zeros(n, bool); small[1:] = st[1:, cv2.CC_STAT_AREA] < d * d
+    blobs &= ~small[lab]
+    # spec "solid_boxes": areas (fractions of the output) where thinner solid shapes count as solid,
+    # e.g. an open black mouth that tapers
+    hh, ww = ink.shape
+    for x0, y0, x1, y1 in solid_boxes:
+        ds = int(max(before, TARGET_STROKE_PX) * 1.3) | 1
+        box = np.zeros_like(ink); box[int(y0 * hh):int(y1 * hh), int(x0 * ww):int(x1 * ww)] = True
+        bb = (box & cv2.morphologyEx(ink.astype(np.uint8), cv2.MORPH_OPEN,
+                                     cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (ds, ds))).astype(bool)).astype(np.uint8)
+        n, lab, st, _ = cv2.connectedComponentsWithStats(bb, connectivity=8)
+        big = np.zeros(n, bool); big[1:] = st[1:, cv2.CC_STAT_AREA] >= 4 * ds * ds
+        blobs |= big[lab]
     ink = lines | blobs
     # inside solid black areas (incl. their white highlight holes) use the original pixels,
     # so eye highlights keep their round shape
@@ -114,5 +129,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("src"); ap.add_argument("dst")
     ap.add_argument("--box", nargs=2, type=float, default=BOX_IN)
+    ap.add_argument("--spec", help="specs/X.json (uses its solid_boxes)")
     a = ap.parse_args()
-    print(json.dumps(clean(a.src, a.dst, tuple(a.box)), indent=2))
+    sb = json.load(open(a.spec)).get("solid_boxes", []) if a.spec else []
+    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sb), indent=2))

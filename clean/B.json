@@ -1,0 +1,16 @@
+{
+  "src": "raw/B_bear_v1.png",
+  "size_px": [
+    1446,
+    1890
+  ],
+  "size_in": [
+    4.82,
+    6.3
+  ],
+  "stroke_px_before": 24.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 17,
+  "tiny_regions": 4
+}

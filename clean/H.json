@@ -1,0 +1,16 @@
+{
+  "src": "raw/H_hippo_v1.png",
+  "size_px": [
+    1640,
+    1890
+  ],
+  "size_in": [
+    5.47,
+    6.3
+  ],
+  "stroke_px_before": 16.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 14,
+  "tiny_regions": 2
+}

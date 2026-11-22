@@ -1,0 +1,16 @@
+{
+  "src": "raw/F_frog_v1.png",
+  "size_px": [
+    1894,
+    1890
+  ],
+  "size_in": [
+    6.31,
+    6.3
+  ],
+  "stroke_px_before": 35.2,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 11,
+  "tiny_regions": 2
+}

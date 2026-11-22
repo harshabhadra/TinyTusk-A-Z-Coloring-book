@@ -1,0 +1,16 @@
+{
+  "src": "raw/G_giraffe_v1.png",
+  "size_px": [
+    1205,
+    1890
+  ],
+  "size_in": [
+    4.02,
+    6.3
+  ],
+  "stroke_px_before": 26.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 26,
+  "tiny_regions": 4
+}

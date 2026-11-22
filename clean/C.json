@@ -1,0 +1,16 @@
+{
+  "src": "raw/C_camel_v1_cropped.png",
+  "size_px": [
+    1728,
+    1890
+  ],
+  "size_in": [
+    5.76,
+    6.3
+  ],
+  "stroke_px_before": 30.8,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 10,
+  "tiny_regions": 2
+}

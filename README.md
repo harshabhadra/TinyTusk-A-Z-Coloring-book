@@ -10,7 +10,7 @@ Build pipeline for the 30-page KDP interior (8.5" × 11", premium color, no blee
 | `colored/` | coloured reference versions + `colors_used` JSON |
 | `pages/` | finished pages (PDF + PNG preview) |
 | `cover/` | cover art and files |
-| `fonts/` | Fredoka (SIL Open Font License, see `fonts/OFL-LICENSE.txt`), overlaps removed for outline letters |
+| `fonts/` | Fredoka (labels) and Baloo 2 ExtraBold (big outline letters), both SIL Open Font License, see `fonts/OFL-LICENSE*.txt` |
 
 ## Per-letter workflow
 

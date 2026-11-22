@@ -15,6 +15,22 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 for n in ("Bold", "SemiBold", "Medium"):
     pdfmetrics.registerFont(TTFont(f"Fredoka-{n}", f"fonts/Fredoka-{n}.ttf"))
+# big outline letters use Baloo 2 (standard B, single-storey g); labels use Fredoka
+LETTER_FONT = "Baloo2-ExtraBold"
+pdfmetrics.registerFont(TTFont(LETTER_FONT, f"fonts/{LETTER_FONT}.ttf"))
+
+
+def _glyph_bounds():
+    """Highest and lowest ink over all 52 letters, in em units (for one shared size and baseline)."""
+    from fontTools.ttLib import TTFont as FT
+    f = FT(f"fonts/{LETTER_FONT}.ttf"); cmap = f.getBestCmap(); glyf = f["glyf"]; upm = f["head"].unitsPerEm
+    ys = []
+    for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz":
+        g = glyf[cmap[ord(ch)]]; g.recalcBounds(glyf); ys += [g.yMin / upm, g.yMax / upm]
+    return max(ys), min(ys)
+
+
+GLYPH_TOP, GLYPH_BOT = _glyph_bounds()
 
 W, H = 8.5, 11.0
 PT = 72
@@ -124,15 +140,20 @@ class Page:
         colors = json.load(open(f"colored/{L}.json"))["colors_used"]
         self.border()
 
-        # big outline letters: fixed column, centred; wide pairs (Mm, Ww) shrink to fit
+        # big outline letters: one size and baseline for every page, sized so the tallest
+        # ascender and deepest descender (f, g, j, p, q, y) stay inside the band; very wide pairs
+        # (Mm, Ww) shrink horizontally-centred around the same baseline
         lx0, lx1 = LETTER_COL
         pair = L + L.lower()
-        size = LETTER_CAP * PT / CAP
-        size = min(size, (lx1 - lx0) * PT / (pdfmetrics.stringWidth(pair, "Fredoka-Bold", size) / size))
-        cap = size * CAP / PT
-        lw = pdfmetrics.stringWidth(pair, "Fredoka-Bold", size) / PT
-        base = (BAND_TOP + BAND_BOT) / 2 + cap / 2
-        self.outline_text(pair, (lx0 + lx1 - lw) / 2, base, size)
+        band_h = BAND_BOT - BAND_TOP - 0.1
+        size = min(LETTER_CAP * PT / CAP, band_h * PT / (GLYPH_TOP - GLYPH_BOT))
+        base = BAND_TOP + 0.05 + GLYPH_TOP * size / PT
+        size_w = min(size, (lx1 - lx0) * PT / (pdfmetrics.stringWidth(pair, LETTER_FONT, size) / size))
+        if size_w < size:                       # keep the shrunk pair vertically centred on the normal one
+            base -= (GLYPH_TOP + GLYPH_BOT) / 2 * (size - size_w) / PT
+            size = size_w
+        lw = pdfmetrics.stringWidth(pair, LETTER_FONT, size) / PT
+        self.outline_text(pair, (lx0 + lx1 - lw) / 2, base, size, font=LETTER_FONT)
 
         # middle column: two-line label pill
         mx0, mx1 = MID_COL
