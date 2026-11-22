@@ -135,6 +135,8 @@ p { margin: 0 0 1em; }
 }
 .pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 4px rgba(251, 140, 0, .25); animation: pulse 2s var(--ease) infinite; }
 .pill-light { background: var(--sun-soft); }
+.pill-live .dot { background: var(--green-dark); box-shadow: 0 0 0 4px rgba(46, 125, 50, .25); animation: none; }
+[hidden] { display: none !important; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(251, 140, 0, 0); } }
 
 .book-title { margin: 0; line-height: .92; font-weight: 800; }
