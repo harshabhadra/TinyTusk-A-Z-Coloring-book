@@ -1,6 +1,18 @@
 (() => {
   "use strict";
 
+  /* ---------- Launch switch ----------
+     Paste the Amazon product link here once the book is live, e.g.
+     "https://www.amazon.com/dp/XXXXXXXXXX". Every "Buy on Amazon" button
+     then uses it, and the "in review" messages are hidden. */
+  const AMAZON_URL = "";
+
+  if (AMAZON_URL) {
+    document.querySelectorAll("[data-buy]").forEach((a) => { a.href = AMAZON_URL; });
+    document.querySelectorAll("[data-prelaunch]").forEach((el) => { el.hidden = true; });
+    document.querySelectorAll("[data-live]").forEach((el) => { el.hidden = false; });
+  }
+
   const ANIMALS = {
     A: "Alligator", B: "Bear", C: "Camel", D: "Dolphin", E: "Elephant", F: "Frog",
     G: "Giraffe", H: "Hippo", I: "Iguana", J: "Jellyfish", K: "Koala", L: "Lion",

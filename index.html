@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My First A to Z Animals: Copy Coloring Book | TinyTusk</title>
-  <meta name="description" content="Meet 26 cute baby animals from Alligator to Zebra. A big, friendly copy-and-color alphabet book for ages 3 to 8, coming soon from TinyTusk.">
+  <meta name="description" content="Meet 26 cute baby animals from Alligator to Zebra. A big, friendly copy-and-color alphabet book for ages 3 to 8, from TinyTusk. Arriving on Amazon in a few days.">
   <meta name="theme-color" content="#A9DDF5">
   <meta property="og:type" content="book">
   <meta property="og:title" content="My First A to Z Animals: Copy Coloring Book">
-  <meta property="og:description" content="26 cute baby animals to copy, color and learn the alphabet. Ages 3 to 8. Coming soon from TinyTusk.">
+  <meta property="og:description" content="26 cute baby animals to copy, color and learn the alphabet. Ages 3 to 8. Arriving on Amazon in a few days.">
   <meta property="og:image" content="assets/cover-front.jpg">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +36,8 @@
         <a href="#try">Try it</a>
         <a href="#free">Free pages</a>
         <a href="#faq">FAQ</a>
-        <a class="btn btn-small btn-primary" href="#notify">Get launch news</a>
+        <a class="btn btn-small btn-primary" href="#notify" data-prelaunch>Get launch news</a>
+        <a class="btn btn-small btn-primary" href="#" data-buy data-live hidden rel="noopener" target="_blank">Buy on Amazon</a>
       </nav>
     </div>
   </header>
@@ -46,7 +47,8 @@
     <section class="hero" id="top">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <p class="pill"><span class="dot" aria-hidden="true"></span> Coming soon to Amazon</p>
+          <p class="pill" data-prelaunch><span class="dot" aria-hidden="true"></span> In review at Amazon, arriving in a few days</p>
+          <p class="pill pill-live" data-live hidden><span class="dot" aria-hidden="true"></span> Now on Amazon</p>
           <h1 class="book-title">
             <span class="t-first">My First</span>
             <span class="t-az"><span class="c-red">A</span> <span class="c-orange">to</span> <span class="c-green">Z</span></span>
@@ -55,7 +57,8 @@
           <p class="t-sub">Copy Coloring Book</p>
           <p class="lead">Meet 26 cute baby animals, from a smiling Alligator to a stripy Zebra. Every page has a big outline picture to color, a little colored picture to copy, and a giant hollow letter to fill in too.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#notify">Tell me when it launches</a>
+            <a class="btn btn-primary" href="#notify" data-prelaunch>Tell me when it&rsquo;s live</a>
+            <a class="btn btn-primary" href="#" data-buy data-live hidden rel="noopener" target="_blank">Buy on Amazon</a>
             <a class="btn btn-ghost" href="#free">
               <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
               Free sample pages
@@ -218,7 +221,7 @@
         <div>
           <p class="eyebrow">Free printable</p>
           <h2 id="free-title">Print 5 pages for free</h2>
-          <p>Try the book at home before it launches: the name page plus Alligator, Elephant, Lion and Panda. Print on US Letter paper at 100% scale.</p>
+          <p>Try the book at home first: the name page plus Alligator, Elephant, Lion and Panda. Print on US Letter paper at 100% scale.</p>
           <a class="btn btn-primary" href="assets/downloads/tinytusk-free-sample-pages.pdf" download>
             <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
             Download free pages (PDF, 0.8 MB)
@@ -232,9 +235,10 @@
       <div class="container">
         <div class="notify-card">
           <div class="notify-copy">
-            <p class="pill pill-light"><span class="dot" aria-hidden="true"></span> Coming soon</p>
-            <h2 id="notify-title">Be first to know when it's out</h2>
-            <p>We'll send one email on launch day with the Amazon link. No spam, ever.</p>
+            <p class="pill pill-light" data-prelaunch><span class="dot" aria-hidden="true"></span> In review at Amazon</p>
+            <h2 id="notify-title"><span data-prelaunch>Get the link the day it&rsquo;s live</span><span data-live hidden>Hear about the next TinyTusk book</span></h2>
+            <p data-prelaunch>We'll send one email on launch day with the Amazon link. No spam, ever.</p>
+            <p data-live hidden>We'll email you when a new book or free printable comes out. No spam, ever.</p>
           </div>
           <!-- Set data-action to your Mailchimp / ConvertKit / Formspree form URL (see website/README.md). -->
           <form class="notify-form" id="notify-form" method="post" data-action="YOUR_FORM_ACTION_URL" novalidate>
@@ -243,7 +247,7 @@
               <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="parent@example.com" required aria-describedby="email-help email-error">
               <button class="btn btn-primary" type="submit">Notify me</button>
             </div>
-            <p class="help" id="email-help">One launch email. Unsubscribe any time.</p>
+            <p class="help" id="email-help">Unsubscribe any time.</p>
             <p class="error" id="email-error" role="alert" hidden></p>
             <p class="success" id="email-success" role="status" hidden></p>
           </form>
@@ -280,7 +284,8 @@
             </details>
             <details>
               <summary>When and where can I buy it?</summary>
-              <p>It's coming soon to Amazon as a paperback. <a href="#notify">Leave your email</a> and we'll send the link on launch day.</p>
+              <p data-prelaunch>The paperback is in final review at Amazon and should be available within a few days. <a href="#notify">Leave your email</a> and we&rsquo;ll send the link as soon as it&rsquo;s live.</p>
+              <p data-live hidden>It&rsquo;s available now as a paperback on Amazon. <a href="#" data-buy rel="noopener" target="_blank">Get your copy</a>.</p>
             </details>
             <details>
               <summary>Can I print the free pages more than once?</summary>
