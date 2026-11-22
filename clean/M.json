@@ -1,0 +1,16 @@
+{
+  "src": "raw/M_monkey_v1.png",
+  "size_px": [
+    1787,
+    1890
+  ],
+  "size_in": [
+    5.96,
+    6.3
+  ],
+  "stroke_px_before": 29.6,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 18,
+  "tiny_regions": 2
+}

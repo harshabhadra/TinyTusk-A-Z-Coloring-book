@@ -1,0 +1,16 @@
+{
+  "src": "raw/N_narwhal_v1.png",
+  "size_px": [
+    2040,
+    1703
+  ],
+  "size_in": [
+    6.8,
+    5.68
+  ],
+  "stroke_px_before": 27.6,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 12,
+  "tiny_regions": 2
+}
