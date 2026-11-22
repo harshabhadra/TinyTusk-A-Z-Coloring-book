@@ -15,10 +15,10 @@ Few large simple shapes with big areas to color, suitable for children aged 3 to
 All outlines fully closed. Match the line weight, simplicity and cuteness style of the reference images.
 ```
 
-## P — Peacock
+## P — Panda
 
 ```
-Children's coloring book page: a cute chibi baby peacock standing, its tail fanned out in a half circle behind it with six large simple oval eye-spots, small crest of three dots on its head, full body, centered,
+Children's coloring book page: a cute chibi baby giant panda sitting, holding a short bamboo stalk with two big leaves, round black ears, black eye patches, black arms and legs, full body, centered,
 facing the viewer, oversized head, big round eyes, happy smile.
 Clean thick uniform black outlines on a pure white background.
 No shading, no grey, no color, no hatching, no texture, no background scenery,
