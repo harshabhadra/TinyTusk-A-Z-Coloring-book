@@ -13,6 +13,8 @@ website/
     pages/*.webp              page previews (viewer, "what's inside")
     lineart/*.png             black & white art for the coloring demo
     downloads/tinytusk-free-sample-pages.pdf   name page + A, E, L, P
+    downloads/tinytusk-<book>-free-sample.pdf  samples for the other three books
+    books/<book>/                    cover + 4 preview pages per book (More TinyTusk books section)
 ```
 
 ## Preview locally
@@ -26,7 +28,9 @@ Then open http://localhost:8000.
 ## Before launch: things to fill in
 
 1. **Email sign-up**: in `index.html`, set `data-action="YOUR_FORM_ACTION_URL"` on `#notify-form` to your form endpoint (for example a Formspree URL `https://formspree.io/f/xxxx`, or a Mailchimp/ConvertKit form action). Until then the form validates the email and shows a "sign-ups open soon" message, but sends nothing.
-2. **Buy link on launch day**: replace the "Coming soon to Amazon" pill and the "Tell me when it launches" button in the hero with your Amazon link, and update the "When and where can I buy it?" FAQ answer.
+2. **Buy links on launch day**: at the top of `app.js`, paste each Amazon link:
+   - `AMAZON_URL` is the A to Z Animals Copy Coloring Book. The hero, menu and FAQ switch to "Buy on Amazon".
+   - `BOOK_LINKS` holds the other three books (`color-by-number`, `abc-tracing`, `trace-write`). Each card in "More TinyTusk books" switches from "Coming soon" to "Now on Amazon" with a buy button.
 3. **Custom domain** (optional): if you move to your own domain, update `og:image` and `og:url` in `index.html` to the new address.
 
 ## Deploy

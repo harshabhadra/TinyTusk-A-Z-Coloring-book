@@ -1,17 +1,33 @@
 (() => {
   "use strict";
 
-  /* ---------- Launch switch ----------
-     Paste the Amazon product link here once the book is live, e.g.
-     "https://www.amazon.com/dp/XXXXXXXXXX". Every "Buy on Amazon" button
-     then uses it, and the "in review" messages are hidden. */
+  /* ---------- Amazon links ----------
+     Paste each book's Amazon link once it is live, e.g.
+     "https://www.amazon.com/dp/XXXXXXXXXX".
+     AMAZON_URL is the A to Z Animals Copy Coloring Book (hero, menu, FAQ):
+     its "Buy on Amazon" buttons appear and the "in review" messages hide.
+     BOOK_LINKS are the books in the "More TinyTusk books" section: each card
+     switches from "Coming soon" to "Now on Amazon" with a buy button. */
   const AMAZON_URL = "";
+  const BOOK_LINKS = {
+    "color-by-number": "",
+    "abc-tracing": "",
+    "trace-write": "",
+  };
 
+  const outsideBooks = (el) => !el.closest("[data-book]");
   if (AMAZON_URL) {
-    document.querySelectorAll("[data-buy]").forEach((a) => { a.href = AMAZON_URL; });
+    document.querySelectorAll("[data-buy]").forEach((a) => { if (outsideBooks(a)) a.href = AMAZON_URL; });
     document.querySelectorAll("[data-prelaunch]").forEach((el) => { el.hidden = true; });
     document.querySelectorAll("[data-live]").forEach((el) => { el.hidden = false; });
   }
+  document.querySelectorAll("[data-book]").forEach((card) => {
+    const url = BOOK_LINKS[card.dataset.book];
+    if (!url) return;
+    card.querySelectorAll("[data-buy]").forEach((a) => { a.href = url; a.hidden = false; });
+    card.querySelectorAll("[data-status-soon]").forEach((el) => { el.hidden = true; });
+    card.querySelectorAll("[data-status-live]").forEach((el) => { el.hidden = false; });
+  });
 
   const ANIMALS = {
     A: "Alligator", B: "Bear", C: "Camel", D: "Dolphin", E: "Elephant", F: "Frog",
@@ -53,31 +69,63 @@
   });
   gallery.appendChild(frag);
 
+  /* Page viewer: one list of pages per "group" (the A-Z gallery, or a book's preview strip). */
+  const GROUPS = {
+    az: LETTERS.map((l) => ({
+      src: `assets/pages/${l}.webp`,
+      title: `${l} is for ${ANIMALS[l]}`,
+      short: `${l} · ${ANIMALS[l]}`,
+      alt: `Coloring page for the letter ${l}: ${ANIMALS[l]}`,
+    })),
+  };
+  const BOOK_TITLES = {
+    "color-by-number": "Color by Number",
+    "abc-tracing": "ABC Letter Tracing Workbook",
+    "trace-write": "Trace & Write the Alphabet",
+  };
+  document.querySelectorAll(".peek").forEach((btn) => {
+    const g = btn.dataset.group;
+    const title = btn.getAttribute("aria-label").replace(/^View page: /, "");
+    (GROUPS[g] ||= [])[Number(btn.dataset.index)] = {
+      src: btn.querySelector("img").getAttribute("src"),
+      title,
+      short: title,
+      alt: `${BOOK_TITLES[g] || "TinyTusk"} sample page: ${title}`,
+    };
+  });
+
   const viewer = document.getElementById("viewer");
   const vImg = document.getElementById("viewer-img");
   const vTitle = document.getElementById("viewer-title");
   const vPrevLabel = document.getElementById("viewer-prev-label");
   const vNextLabel = document.getElementById("viewer-next-label");
+  let group = GROUPS.az;
   let current = 0;
   let opener = null;
 
   function showPage(i) {
-    current = (i + LETTERS.length) % LETTERS.length;
-    const l = LETTERS[current];
-    vImg.src = `assets/pages/${l}.webp`;
-    vImg.alt = `Coloring page for the letter ${l}: ${ANIMALS[l]}`;
-    vTitle.textContent = `${l} is for ${ANIMALS[l]}`;
-    const p = LETTERS[(current - 1 + LETTERS.length) % LETTERS.length];
-    const n = LETTERS[(current + 1) % LETTERS.length];
-    vPrevLabel.textContent = `${p} · ${ANIMALS[p]}`;
-    vNextLabel.textContent = `${n} · ${ANIMALS[n]}`;
+    const n = group.length;
+    current = (i + n) % n;
+    const pg = group[current];
+    vImg.src = pg.src;
+    vImg.alt = pg.alt;
+    vTitle.textContent = pg.title;
+    vPrevLabel.textContent = group[(current - 1 + n) % n].short;
+    vNextLabel.textContent = group[(current + 1) % n].short;
+  }
+  function openViewer(g, i, from) {
+    group = GROUPS[g];
+    opener = from;
+    showPage(i);
+    viewer.showModal();
   }
   gallery.addEventListener("click", (e) => {
     const card = e.target.closest(".card");
-    if (!card) return;
-    opener = card;
-    showPage(LETTERS.indexOf(card.dataset.letter));
-    viewer.showModal();
+    if (card) openViewer("az", LETTERS.indexOf(card.dataset.letter), card);
+  });
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".peek");
+    if (btn) openViewer(btn.dataset.group, Number(btn.dataset.index), btn);
   });
   document.getElementById("viewer-prev").addEventListener("click", () => showPage(current - 1));
   document.getElementById("viewer-next").addEventListener("click", () => showPage(current + 1));
