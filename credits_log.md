@@ -10,5 +10,6 @@
 | 2026-11-22 | Batch 3 (O P Q R S T) | Nano Banana 2 | 7 | 83 | 69 | 2 | 6 used + 1 extra not uploaded; P changed from Peacock to Panda |
 | 2026-11-22 | Batch 4 (U V W X Y Z) | Nano Banana 2 | 6 | 69 | 57 | 2 | all six used, no redos |
 | 2026-11-22 | Batch 5 side-view redos (Q U Y Z) | Nano Banana 2 | 4 | 57 | 49 | 2 | all four used; v1 kept in raw/ and specs/v1/ |
+| 2026-11-22 | Cover art (front) | Nano Banana 2 | 1 | 49 | 47 | 2 | came out 1792x2400 (2k, not 4k); upscaled 1.44x in code to 300 dpi |
 
-Remaining: 49 credits ≈ 24 images at 2 credits each (cover at 4k may cost more).
+Remaining: 47 credits ≈ 23 images at 2 credits each.
