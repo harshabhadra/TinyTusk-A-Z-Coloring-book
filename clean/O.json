@@ -1,0 +1,16 @@
+{
+  "src": "raw/O_owl_v1.png",
+  "size_px": [
+    1548,
+    1890
+  ],
+  "size_in": [
+    5.16,
+    6.3
+  ],
+  "stroke_px_before": 28.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 24,
+  "tiny_regions": 8
+}

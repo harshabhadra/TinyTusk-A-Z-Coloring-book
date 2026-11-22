@@ -1,0 +1,16 @@
+{
+  "src": "raw/Q_quail_v1.png",
+  "size_px": [
+    1175,
+    1890
+  ],
+  "size_in": [
+    3.92,
+    6.3
+  ],
+  "stroke_px_before": 24.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 7,
+  "tiny_regions": 2
+}

@@ -1,0 +1,16 @@
+{
+  "src": "raw/T_tiger_v1.png",
+  "size_px": [
+    1542,
+    1890
+  ],
+  "size_in": [
+    5.14,
+    6.3
+  ],
+  "stroke_px_before": 20.4,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 51,
+  "tiny_regions": 8
+}

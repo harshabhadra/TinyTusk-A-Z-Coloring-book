@@ -1,0 +1,16 @@
+{
+  "src": "raw/S_sloth_v1.png",
+  "size_px": [
+    2040,
+    1448
+  ],
+  "size_in": [
+    6.8,
+    4.83
+  ],
+  "stroke_px_before": 19.6,
+  "stroke_px_after": 14.0,
+  "stroke_pt_after": 3.36,
+  "interior_regions": 27,
+  "tiny_regions": 16
+}

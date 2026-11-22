@@ -1,0 +1,16 @@
+{
+  "src": "raw/P_panda_v1.png",
+  "size_px": [
+    1452,
+    1890
+  ],
+  "size_in": [
+    4.84,
+    6.3
+  ],
+  "stroke_px_before": 30.0,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 21,
+  "tiny_regions": 4
+}

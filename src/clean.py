@@ -30,7 +30,7 @@ def stroke_width(ink):
     return float(2 * np.median(vals)) if vals.size else 0.0
 
 
-def clean(src, dst, box_in=BOX_IN, solid_boxes=()):
+def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=()):
     img = cv2.imread(src, cv2.IMREAD_UNCHANGED)
     if img is None:
         sys.exit(f"cannot read {src}")
@@ -98,6 +98,10 @@ def clean(src, dst, box_in=BOX_IN, solid_boxes=()):
     keep = solid > 0.5
     keep[0] = False
     ink = (ink & ~keep[lab]) | (orig_ink & keep[lab])
+    # spec "original_boxes": copy the original pixels unchanged (detailed eyes the rules above garble)
+    for x0, y0, x1, y1 in original_boxes:
+        sl = (slice(int(y0 * hh), int(y1 * hh)), slice(int(x0 * ww), int(x1 * ww)))
+        ink[sl] = orig_ink[sl]
     g = cv2.GaussianBlur(np.where(ink, 0, 255).astype(np.uint8), (7, 7), 0)   # smooth skeleton wobble
     ink = g < 128
     after = stroke_width(ink)
@@ -131,5 +135,5 @@ if __name__ == "__main__":
     ap.add_argument("--box", nargs=2, type=float, default=BOX_IN)
     ap.add_argument("--spec", help="specs/X.json (uses its solid_boxes)")
     a = ap.parse_args()
-    sb = json.load(open(a.spec)).get("solid_boxes", []) if a.spec else []
-    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sb), indent=2))
+    sp = json.load(open(a.spec)) if a.spec else {}
+    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sp.get("solid_boxes", []), sp.get("original_boxes", [])), indent=2))
