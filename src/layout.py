@@ -82,7 +82,7 @@ class Page:
         c = self.c
         c.setStrokeColor(INK); c.setLineWidth(BORDER_W)
         # stroke centred on the 0.5" margin line, inset by half the line so no ink goes outside the margin
-        hw = BORDER_W / 2 / PT
+        hw = BORDER_W / 2 / PT + 0.01            # + safety gap so no ink touches the margin line
         x0, y0, x1, y1 = BORDER
         self.rrect(x0 + hw, y0 + hw, x1 - hw, y1 - hw, BORDER_R)
 
@@ -101,14 +101,15 @@ class Page:
         return size
 
     # --- footer: line-art grass + flowers (colorable), page number circle -------
-    def footer(self, num):
+    def footer(self, num=None):
+        """Grass + flowers strip; with num, a page-number circle in the middle (letter pages)."""
         c = self.c
         c.setStrokeColor(INK); c.setLineWidth(2); c.setLineJoin(1); c.setLineCap(1); c.setFillColor(white)
         base, top = 10.28, 9.98
         x0, x1 = 0.8, 7.7
         cx = W / 2
         gap = 0.42
-        for a, b in ((x0, cx - gap), (cx + gap, x1)):
+        for a, b in (((x0, cx - gap), (cx + gap, x1)) if num is not None else ((x0, x1),)):
             p = c.beginPath(); p.moveTo(self.X(a), self.Y(base))
             n = max(1, round((b - a) / 0.22)); step = (b - a) / n
             for i in range(n):
@@ -127,6 +128,8 @@ class Page:
                 ang = math.radians(90 + k * 72)
                 c.circle(self.X(fx + d * math.cos(ang)), self.Y(stem_top - 0.02 - d * math.sin(ang)), r_pet * PT, stroke=1, fill=1)
             c.circle(self.X(fx), self.Y(stem_top - 0.02), 0.05 * PT, stroke=1, fill=1)
+        if num is None:
+            return
         # page number
         cy = 10.08
         c.setLineWidth(2.5); c.circle(self.X(cx), self.Y(cy), 0.24 * PT, stroke=1, fill=1)
@@ -195,7 +198,7 @@ class Page:
 def build(letter, out_dir="pages"):
     num = 3 + ord(letter) - ord("A")
     pdf = f"{out_dir}/{letter}.pdf"
-    c = canvas.Canvas(pdf, pagesize=(W * PT, H * PT))
+    c = canvas.Canvas(pdf, pagesize=(W * PT, H * PT), initialFontName="Fredoka-Medium")
     c.setTitle(f"{letter} is for {ANIMALS[letter]}"); c.setAuthor("TinyTusk")
     Page(c).letter_page(letter, num)
     c.showPage(); c.save()
