@@ -27,14 +27,13 @@ Then open http://localhost:8000.
 
 1. **Email sign-up**: in `index.html`, set `data-action="YOUR_FORM_ACTION_URL"` on `#notify-form` to your form endpoint (for example a Formspree URL `https://formspree.io/f/xxxx`, or a Mailchimp/ConvertKit form action). Until then the form validates the email and shows a "sign-ups open soon" message, but sends nothing.
 2. **Buy link on launch day**: replace the "Coming soon to Amazon" pill and the "Tell me when it launches" button in the hero with your Amazon link, and update the "When and where can I buy it?" FAQ answer.
-3. **Social image**: `og:image` is relative. When the site has a domain, change it to the full URL (for example `https://yourdomain.com/assets/cover-front.jpg`).
+3. **Custom domain** (optional): if you move to your own domain, update `og:image` and `og:url` in `index.html` to the new address.
 
 ## Deploy
 
-It's a folder of static files, so any static host works:
+The site is live on GitHub Pages at https://harshabhadra.github.io/TinyTusk-A-Z-Coloring-book/
 
-- **GitHub Pages**: Pages can only serve a branch's root or `/docs` folder, so either rename `website/` to `docs/` (then Settings → Pages → deploy from branch `website`, folder `/docs`) or use a GitHub Actions Pages workflow that uploads `website/`.
-- **Netlify / Cloudflare Pages / Vercel**: set the publish directory to `website` with no build command.
+Pushing changes under `website/` to the `website` branch runs `.github/workflows/deploy-site.yml`, which copies the folder to the `gh-pages` branch. Pages serves that branch (Settings → Pages → Deploy from a branch → `gh-pages`, `/ (root)`). A new version is usually live within a minute or two.
 
 ## Updating images
 
