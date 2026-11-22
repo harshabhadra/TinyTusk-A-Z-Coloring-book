@@ -1,16 +1,16 @@
 {
-  "src": "raw/Y_yak_v1.png",
+  "src": "raw/Y_yak_v2.png",
   "size_px": [
-    1652,
-    1890
+    2040,
+    1460
   ],
   "size_in": [
-    5.51,
-    6.3
+    6.8,
+    4.87
   ],
   "stroke_px_before": 24.0,
   "stroke_px_after": 15.2,
   "stroke_pt_after": 3.64,
-  "interior_regions": 21,
-  "tiny_regions": 3
+  "interior_regions": 30,
+  "tiny_regions": 4
 }

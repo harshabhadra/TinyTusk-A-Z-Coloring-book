@@ -1,16 +1,16 @@
 {
-  "src": "raw/U_urial_v1.png",
+  "src": "raw/U_urial_v2.png",
   "size_px": [
-    1956,
+    1775,
     1890
   ],
   "size_in": [
-    6.52,
+    5.92,
     6.3
   ],
-  "stroke_px_before": 26.4,
+  "stroke_px_before": 23.2,
   "stroke_px_after": 15.2,
   "stroke_pt_after": 3.64,
-  "interior_regions": 42,
-  "tiny_regions": 4
+  "interior_regions": 46,
+  "tiny_regions": 9
 }

@@ -1,16 +1,16 @@
 {
-  "src": "raw/Z_zebra_v1.png",
+  "src": "raw/Z_zebra_v2.png",
   "size_px": [
-    1329,
+    1760,
     1890
   ],
   "size_in": [
-    4.43,
+    5.87,
     6.3
   ],
-  "stroke_px_before": 25.2,
+  "stroke_px_before": 29.6,
   "stroke_px_after": 15.2,
   "stroke_pt_after": 3.64,
-  "interior_regions": 27,
-  "tiny_regions": 2
+  "interior_regions": 36,
+  "tiny_regions": 4
 }

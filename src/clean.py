@@ -30,7 +30,7 @@ def stroke_width(ink):
     return float(2 * np.median(vals)) if vals.size else 0.0
 
 
-def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=(), mode=None):
+def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=(), mode=None, lump_ratio=None):
     img = cv2.imread(src, cv2.IMREAD_UNCHANGED)
     if img is None:
         sys.exit(f"cannot read {src}")
@@ -75,6 +75,14 @@ def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=(), mode=None)
     n, lab, st, _ = cv2.connectedComponentsWithStats(blobs.astype(np.uint8), connectivity=8)
     small = np.zeros(n, bool); small[1:] = st[1:, cv2.CC_STAT_AREA] < d * d
     blobs &= ~small[lab]
+    # spec "lump_ratio": also drop solid shapes whose thickest point is under this many stroke
+    # widths (thick double-line joins that are not real solid areas)
+    if lump_ratio:
+        dist = cv2.distanceTransform(ink.astype(np.uint8), cv2.DIST_L2, 5)
+        n, lab, st, _ = cv2.connectedComponentsWithStats(blobs.astype(np.uint8), connectivity=8)
+        mx = np.zeros(n); np.maximum.at(mx, lab[blobs], dist[blobs])
+        thin = np.zeros(n, bool); thin[1:] = mx[1:] < lump_ratio * before
+        blobs &= ~thin[lab]
     # spec "solid_boxes": areas (fractions of the output) where thinner solid shapes count as solid,
     # e.g. an open black mouth that tapers
     hh, ww = ink.shape
@@ -142,4 +150,5 @@ if __name__ == "__main__":
     ap.add_argument("--spec", help="specs/X.json (uses its solid_boxes)")
     a = ap.parse_args()
     sp = json.load(open(a.spec)) if a.spec else {}
-    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sp.get("solid_boxes", []), sp.get("original_boxes", []), sp.get("mode")), indent=2))
+    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sp.get("solid_boxes", []), sp.get("original_boxes", []), sp.get("mode"),
+                                 sp.get("lump_ratio")), indent=2))
