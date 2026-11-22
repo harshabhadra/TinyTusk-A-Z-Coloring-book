@@ -1,16 +1,16 @@
 {
-  "src": "raw/R_rabbit_v1.png",
+  "src": "raw/R_rabbit_v2.png",
   "size_px": [
-    1098,
+    1221,
     1890
   ],
   "size_in": [
-    3.66,
+    4.07,
     6.3
   ],
   "stroke_px_before": 28.0,
   "stroke_px_after": 15.2,
   "stroke_pt_after": 3.64,
-  "interior_regions": 13,
+  "interior_regions": 18,
   "tiny_regions": 7
 }

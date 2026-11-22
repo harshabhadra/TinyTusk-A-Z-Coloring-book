@@ -11,5 +11,6 @@
 | 2026-11-22 | Batch 4 (U V W X Y Z) | Nano Banana 2 | 6 | 69 | 57 | 2 | all six used, no redos |
 | 2026-11-22 | Batch 5 side-view redos (Q U Y Z) | Nano Banana 2 | 4 | 57 | 49 | 2 | all four used; v1 kept in raw/ and specs/v1/ |
 | 2026-11-22 | Cover art (front) | Nano Banana 2 | 1 | 49 | 47 | 2 | came out 1792x2400 (2k, not 4k); upscaled 1.44x in code to 300 dpi |
+| 2026-11-22 | R redo (Rabbit, one tail) | Nano Banana 2 | 1 | 47 | 45 | 2 | v1 kept in raw/ and specs/v1/ |
 
-Remaining: 47 credits ≈ 23 images at 2 credits each.
+Remaining: 45 credits ≈ 22 images at 2 credits each.
