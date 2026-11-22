@@ -19,6 +19,7 @@ SPINE = round(PAGES * 0.002347, 4)
 W = BLEED + TRIM_W + SPINE + TRIM_W + BLEED
 H = BLEED + TRIM_H + BLEED
 PT = 72
+SUBTITLE = "26 Cute Baby Animals to Copy, Color & Learn the Alphabet"
 SAFE = 0.25                                       # text distance from trim / spine edges (brief)
 
 BACK_X0, BACK_X1 = BLEED, BLEED + TRIM_W          # back trim area
@@ -100,14 +101,16 @@ class Cover:
         c.drawImage(ImageReader("cover/front_art_300dpi.png"), self.X(FRONT_X0), 0,
                     (W - FRONT_X0) * PT, H * PT)
         cx = FRONT_CX
-        self.outlined("My First", cx, 1.32, "Fredoka-Bold", 50, [white], width=6)
+        self.outlined("My First", cx, 0.97, "Fredoka-Bold", 50, [white], width=6)
         az = [HexColor(PALETTE[k]) for k in ("Red", "Orange", "Yellow", "Yellow", "Light green", "Dark blue")]
-        self.outlined("A to Z", cx, 2.7, LETTER_FONT, 118, [az[0], white, az[1], az[2], white, az[4]], width=7)
-        self.outlined("Animals", cx, 3.55, LETTER_FONT, 74, [HexColor(PALETTE["Purple"])], width=6)
+        self.outlined("A to Z", cx, 2.33, LETTER_FONT, 118, [az[0], white, az[1], az[2], white, az[4]], width=7)
+        self.outlined("Animals", cx, 3.16, LETTER_FONT, 74, [HexColor(PALETTE["Purple"])], width=6)
         # pill: Copy Coloring Book
         pw = pdfmetrics.stringWidth("Copy Coloring Book", "Fredoka-Bold", 26) / PT + 0.7
-        self.rrect(cx - pw / 2, 3.78, cx + pw / 2, 4.38, 0.3, fill=HexColor("#FFF3B0"), width=3)
-        self.text("Copy Coloring Book", cx, 4.08 + 26 * CAP / PT / 2, "Fredoka-Bold", 26)
+        self.rrect(cx - pw / 2, 3.38, cx + pw / 2, 3.94, 0.28, fill=HexColor("#FFF3B0"), width=3)
+        self.text("Copy Coloring Book", cx, 3.66 + 26 * CAP / PT / 2, "Fredoka-Bold", 26)
+        # subtitle (dark text with a thin white outline so it stays readable over the art)
+        self.outlined(SUBTITLE, cx, 4.3, "Fredoka-SemiBold", 16, [INK], stroke=white, width=3)
         # badges in the top corners of the sky
         self.badge(FRONT_X0 + SAFE + 0.72, TRIM_Y0 + SAFE + 0.72, 0.72,
                    [("Ages", "Fredoka-SemiBold", 17), ("3-8".replace("-", "–"), "Fredoka-Bold", 30)],
