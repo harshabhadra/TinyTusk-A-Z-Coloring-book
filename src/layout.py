@@ -51,7 +51,7 @@ PILL_FILL = HexColor("#FFF3B0")
 INK = black
 
 ANIMALS = dict(line.split(":") for line in """A:Alligator B:Bear C:Camel D:Dolphin E:Elephant F:Frog G:Giraffe H:Hippo
-I:Iguana J:Jellyfish K:Koala L:Lion M:Monkey N:Narwhal O:Owl P:Peacock Q:Quail R:Rabbit S:Sloth T:Tiger U:Urial
+I:Iguana J:Jellyfish K:Koala L:Lion M:Monkey N:Narwhal O:Owl P:Panda Q:Quail R:Rabbit S:Sloth T:Tiger U:Urial
 V:Vulture W:Whale X:X-ray_fish Y:Yak Z:Zebra""".split())
 ANIMALS = {k: v.replace("_", " ") for k, v in ANIMALS.items()}
 

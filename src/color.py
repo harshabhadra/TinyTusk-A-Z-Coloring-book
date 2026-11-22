@@ -66,6 +66,14 @@ def fill(clean_path, spec_path, dst):
     ink, lab, stats, cent, interior = labels(clean_path)
     h, w = ink.shape
     assign = {}
+    # "fill_boxes": {"white": [[x0, y0, x1, y1]]} colours every region whose centre lies in the box
+    # (handy for eyes made of many tiny parts); explicit seed points still win
+    for color, boxes in spec.get("fill_boxes", {}).items():
+        for x0, y0, x1, y1 in boxes:
+            for i in interior:
+                cx, cy = cent[i]
+                if x0 * w <= cx <= x1 * w and y0 * h <= cy <= y1 * h:
+                    assign[i] = color
     for color, pts in spec.get("fills", {}).items():
         for fx, fy in pts:
             x, y = int(fx * w), int(fy * h)
