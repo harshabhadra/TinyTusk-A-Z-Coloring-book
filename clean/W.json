@@ -1,0 +1,16 @@
+{
+  "src": "raw/W_whale_v1.png",
+  "size_px": [
+    1811,
+    1890
+  ],
+  "size_in": [
+    6.04,
+    6.3
+  ],
+  "stroke_px_before": 30.8,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 12,
+  "tiny_regions": 2
+}

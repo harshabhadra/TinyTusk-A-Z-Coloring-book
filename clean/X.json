@@ -1,0 +1,16 @@
+{
+  "src": "raw/X_xrayfish_v1.png",
+  "size_px": [
+    2040,
+    1846
+  ],
+  "size_in": [
+    6.8,
+    6.15
+  ],
+  "stroke_px_before": 46.6,
+  "stroke_px_after": 15.2,
+  "stroke_pt_after": 3.64,
+  "interior_regions": 9,
+  "tiny_regions": 0
+}

@@ -8,5 +8,6 @@
 | 2026-11-21/22 | Batch 1 (B C D F G H) | Nano Banana 2 | 7 | 109 | 95 | 2 | 6 used + 1 extra (2026-11-21 15:30, not uploaded); camel came as a paper mockup, cropped in code |
 | 2026-11-22 | Batch 2 (I J K L M N) | Nano Banana 2 | 6 | 95 | 83 | 2 | all six used, no redos |
 | 2026-11-22 | Batch 3 (O P Q R S T) | Nano Banana 2 | 7 | 83 | 69 | 2 | 6 used + 1 extra not uploaded; P changed from Peacock to Panda |
+| 2026-11-22 | Batch 4 (U V W X Y Z) | Nano Banana 2 | 6 | 69 | 57 | 2 | all six used, no redos |
 
-Remaining: 69 credits (before batch 4) ≈ 34 images at 2 credits each.
+Remaining: 57 credits ≈ 28 images at 2 credits each (cover at 4k may cost more).

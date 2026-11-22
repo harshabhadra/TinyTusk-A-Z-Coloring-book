@@ -30,7 +30,7 @@ def stroke_width(ink):
     return float(2 * np.median(vals)) if vals.size else 0.0
 
 
-def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=()):
+def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=(), mode=None):
     img = cv2.imread(src, cv2.IMREAD_UNCHANGED)
     if img is None:
         sys.exit(f"cannot read {src}")
@@ -98,6 +98,12 @@ def clean(src, dst, box_in=BOX_IN, solid_boxes=(), original_boxes=()):
     keep = solid > 0.5
     keep[0] = False
     ink = (ink & ~keep[lab]) | (orig_ink & keep[lab])
+    # spec "mode": "erode" -- for art with many solid shapes (zebra stripes): keep the original
+    # drawing and thin it evenly to the target weight instead of redrawing from centre lines
+    if mode == "erode" and before > TARGET_STROKE_PX + 1:
+        r = int(round((before - TARGET_STROKE_PX) / 2))
+        ink = lines | cv2.erode(orig_ink.astype(np.uint8),
+                                cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))).astype(bool)
     # spec "original_boxes": copy the original pixels unchanged (detailed eyes the rules above garble)
     for x0, y0, x1, y1 in original_boxes:
         sl = (slice(int(y0 * hh), int(y1 * hh)), slice(int(x0 * ww), int(x1 * ww)))
@@ -136,4 +142,4 @@ if __name__ == "__main__":
     ap.add_argument("--spec", help="specs/X.json (uses its solid_boxes)")
     a = ap.parse_args()
     sp = json.load(open(a.spec)) if a.spec else {}
-    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sp.get("solid_boxes", []), sp.get("original_boxes", [])), indent=2))
+    print(json.dumps(clean(a.src, a.dst, tuple(a.box), sp.get("solid_boxes", []), sp.get("original_boxes", []), sp.get("mode")), indent=2))
