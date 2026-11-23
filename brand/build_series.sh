@@ -4,7 +4,7 @@
 # The original A-Z coloring book (repo root) is only read here, never rebuilt.
 set -e
 cd "$(dirname "$0")/.."
-python3 brand/make_placeholders.py --mascot-only
+python3 brand/make_assets.py
 python3 -c "import sys; sys.path.insert(0, 'brand'); import brand; brand.render_front('cover.pdf', 'az-coloring')"
 
 # pass 1: covers (each refreshes brand/series/<book>.png); pass 2: covers again with every thumbnail present

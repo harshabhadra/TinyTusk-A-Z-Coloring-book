@@ -4,7 +4,9 @@ The original A-Z coloring book is in KDP review and is NOT built from this modul
 it only appears here as a cover thumbnail in the "Collect the series" strip and on the "More TinyTusk books" page.
 
 Swappable files (same name, any size, PNG with transparency is best):
-  brand/logo.png          the TinyTusk logo (currently a PLACEHOLDER made by brand/make_placeholders.py)
+  brand/logos/*.png       Sima's final logo files (white backgrounds); brand/make_assets.py cuts them out to
+  brand/badge.png         round badge (front covers), brand/logo_wide.png (back covers, title pages),
+  brand/logo_stacked.png  (copyright pages)
   brand/mascot.png        the baby elephant mascot in colour (cut out of ../colored/E.png), used on covers
   brand/mascot_line.png   the mascot as line art (cut out of ../clean/E.png), used inside the books
   brand/series/<key>.png  front-cover thumbnails, refreshed by each book's cover.py (render_front)
@@ -78,7 +80,9 @@ def draw_img(p, path, box, gray=False, align="c"):
     return x, y, x + w, y + h
 
 
-def logo(gray=False): return f"{BRAND}/logo.png"
+def logo(gray=False): return f"{BRAND}/badge.png"          # round badge
+def logo_wide(): return f"{BRAND}/logo_wide.png"            # horizontal logo
+def logo_stacked(): return f"{BRAND}/logo_stacked.png"      # mascot over the name
 def mascot(line=False): return f"{BRAND}/mascot_line.png" if line else f"{BRAND}/mascot.png"
 
 
@@ -128,28 +132,23 @@ def rrect(p, x0, y0, x1, y1, r, fill=None, stroke=INK, width=2.5):
                 stroke=1 if stroke is not None else 0, fill=1 if fill is not None else 0)
 
 
-# ---- the series lockup: [logo] TinyTusk / Learning Series -----------------------------------------
+# ---- the series lockup: Sima's horizontal logo on a white pill ------------------------------------
 LOCKUP_H = 0.62
+WIDE_ASPECT = Image.open(f"{BRAND}/logo_wide.png").size[0] / Image.open(f"{BRAND}/logo_wide.png").size[1]
 
 
 def lockup_width(h=LOCKUP_H):
-    tw = max(pdfmetrics.stringWidth("TinyTusk", "Fredoka-Bold", h * 34) / PT,
-             pdfmetrics.stringWidth("LEARNING SERIES", "Fredoka-SemiBold", h * 13) / PT)
-    return h * 0.18 + h * 0.86 + h * 0.15 + tw + h * 0.32
+    return h * 0.78 * WIDE_ASPECT + h * 0.6
 
 
 def lockup(p, x1, y1, h=LOCKUP_H, anchor="r", gray=False, fill=white):
-    """White pill with the logo and 'TinyTusk / LEARNING SERIES'. (x1, y1) = bottom-right corner (anchor 'r')
-    or bottom-left corner (anchor 'l'). The same lockup sits in the same corner of every front cover."""
+    """White pill with the horizontal TinyTusk logo. (x1, y1) = bottom-right corner (anchor 'r')
+    or bottom-left corner (anchor 'l'). Used on the back covers and the interior title pages."""
     w = lockup_width(h)
     x0 = x1 - w if anchor == "r" else x1
     y0 = y1 - h
     rrect(p, x0, y0, x0 + w, y1, h / 2, fill=fill, width=2.2)
-    lx = x0 + h * 0.18
-    draw_img(p, logo(), (lx, y0 + h * 0.07, lx + h * 0.86, y1 - h * 0.07), gray=gray)
-    tx = lx + h * 0.86 + h * 0.15
-    text(p, "TinyTusk", tx, y0 + h * 0.56, "Fredoka-Bold", h * 34, anchor="l")
-    text(p, "LEARNING SERIES", tx, y0 + h * 0.84, "Fredoka-SemiBold", h * 13, color=HexColor("#555555"), anchor="l")
+    draw_img(p, logo_wide(), (x0 + h * 0.3, y0 + h * 0.11, x0 + w - h * 0.3, y1 - h * 0.11), gray=gray)
     return x0, y0, x0 + w, y1
 
 
@@ -183,9 +182,13 @@ def mascot_tip(p, box, say, line=False, side="r", size=15, bubble_w=3.0, fill=wh
 
 
 # ---- covers ---------------------------------------------------------------------------------------------
-def front_lockup(p, front_x1, trim_y1, safe=0.25):
-    """Series lockup in the bottom-right corner of the front cover (same spot on every book)."""
-    return lockup(p, front_x1 - safe, trim_y1 - safe)
+BADGE_D = 1.25
+
+
+def front_lockup(p, front_x1, trim_y1, safe=0.25, d=BADGE_D):
+    """Round TinyTusk badge in the bottom-right corner of the front cover (same spot and size on every book)."""
+    x1, y1 = front_x1 - safe, trim_y1 - safe
+    return draw_img(p, logo(), (x1 - d, y1 - d, x1, y1))
 
 
 def spine(p, x0, x1, pages, short, H, color=INK, min_pages=80):
@@ -266,7 +269,7 @@ def back(p, key, x0, x1, headline, blurb, bullets, thumbs, ages, inside_label="I
 def copyright_page(p, title, gray=True, extra=()):
     """Copyright / imprint page (page 2). p is a frontmatter.Front-style page (border, centred, footer)."""
     p.border()
-    draw_img(p, logo(), (3.25, 1.2, 5.25, 3.2), gray=gray)
+    draw_img(p, logo_stacked(), (3.15, 1.0, 5.35, 3.45), gray=gray)
     p.centred(title, 3.9, "Fredoka-Bold", 24)
     p.centred(f"Part of the {SERIES}", 4.35, "Fredoka-SemiBold", 16)
     lines = [f"Published by {IMPRINT}",

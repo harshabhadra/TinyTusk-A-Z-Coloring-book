@@ -169,17 +169,15 @@ class Cover:
         pw = pdfmetrics.stringWidth(sub, "Fredoka-Bold", 21) / PT + 0.7
         self.rrect(cx - pw / 2, 5.3, cx + pw / 2, 5.85, 0.27, fill=P("Purple"), width=3)
         self.text(sub, cx, 5.575 + 21 * CAP / PT / 2, "Fredoka-Bold", 21, white)
-        self.text("Handwriting practice workbook with 26 baby animals", cx, 6.25, "Fredoka-SemiBold", 17)
+        self.text(f"{PAGES}-page handwriting workbook with 26 baby animals", cx, 6.25, "Fredoka-SemiBold", 17)
         # animals
         spots = [("A", 1.55, 7.55, P("Light green")), ("L", 3.35, 7.25, P("Orange")), ("P", 5.15, 7.25, P("Pink")),
                  ("E", 6.95, 7.55, P("Light blue")), ("G", 2.45, 9.25, P("Yellow")), ("Z", 4.25, 9.35, P("Purple")),
                  ("R", 6.05, 9.25, P("Red"))]
         for L, ax, ay, col in spots:
             self.animal_circle(L, FRONT_X0 + ax, ay, 0.78, col)
-        self.badge(FRONT_X0 + SAFE + 0.68, TRIM_Y1 - SAFE - 1.35, 0.66,
+        self.badge(FRONT_X0 + SAFE + 0.68, TRIM_Y1 - SAFE - 0.95, 0.66,
                    [("Ages", "Fredoka-SemiBold", 16), ("3–5", "Fredoka-Bold", 28)], P("Yellow"))
-        self.badge(FRONT_X1 - SAFE - 0.68, TRIM_Y1 - SAFE - 1.35, 0.66,
-                   [(str(PAGES), "Fredoka-Bold", 28), ("pages", "Fredoka-SemiBold", 13)], P("Pink"))
         brand.front_lockup(self, FRONT_X1, TRIM_Y1, SAFE)
 
     def pencil(self, tip_x, tip_y, length):

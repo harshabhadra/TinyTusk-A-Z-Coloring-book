@@ -130,7 +130,7 @@ class Cover(AZCover):
             self.crayon(x0 + k * (chip_w + gap), 10.05, name, k + 1)
         # side animals (coloured cut-outs)
         for L, b in (("E", (FRONT_X0 + 0.25, 6.6, cx - 2.55, 8.1)), ("A", (FRONT_X0 + 0.2, 8.3, cx - 2.55, 10.3)),
-                     ("Z", (cx + 2.55, 6.4, FRONT_X1 - 0.25, 8.2)), ("P", (cx + 2.55, 8.35, FRONT_X1 - 0.2, 10.3))):
+                     ("Z", (cx + 2.55, 6.4, FRONT_X1 - 0.25, 8.2)), ("P", (cx + 2.55, 8.3, FRONT_X1 - 0.2, 9.6))):
             self.img(cutout(L, f"{REPO}/colored/{L}.png"), b)
         self.badge(FRONT_X0 + SAFE + 0.72, TRIM_Y0 + SAFE + 0.72, 0.72,
                    [("Ages", "Fredoka-SemiBold", 17), ("4–8", "Fredoka-Bold", 30)], HexColor(PALETTE["Yellow"]))
