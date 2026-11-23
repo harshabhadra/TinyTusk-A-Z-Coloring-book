@@ -11,7 +11,8 @@ Shared by the three series books: `TinyTusk-ABC-Letter-Tracing-Workbook/`, `Trac
 | `series/<book>.png` | Front-cover thumbnails, refreshed by each book's `cover.py` |
 | `brand.py` | Series lockup, shared back-cover layout, spine text, copyright page, "More TinyTusk books" page, mascot speech bubbles |
 | `make_placeholders.py` | Makes the mascot cut-outs and the placeholder logo (`--mascot-only` keeps your logo) |
-| `build_series.sh` | Rebuilds all three books' covers (twice, so every series strip has the latest covers) and interiors |
+| `build_series.sh` | Rebuilds all three books' covers (twice, so every series strip has the latest covers), interiors and A+ images |
+| `aplus.py`, `aplus/` | Amazon A+ Content images (see `aplus/README.md`); `aplus/logos/` holds Sima's TinyTusk logos |
 
 What every series book gets:
 - **Front:** the same "TinyTusk / Learning Series" lockup with the logo in the bottom-right corner.
