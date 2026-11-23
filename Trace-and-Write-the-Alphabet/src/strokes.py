@@ -1,4 +1,4 @@
-"""Copied from My-First-ABC-Letter-Tracing-Workbook/src/strokes.py (so this book builds on its own), plus ".".
+"""Copied from TinyTusk-ABC-Letter-Tracing-Workbook/src/strokes.py (so this book builds on its own), plus ".".
 
 Single-stroke (centre-line) letters for tracing, in simple school "ball and stick" style.
 
