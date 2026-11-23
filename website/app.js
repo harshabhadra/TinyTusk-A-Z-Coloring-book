@@ -3,24 +3,16 @@
 
   /* ---------- Amazon links ----------
      Paste each book's Amazon link once it is live, e.g.
-     "https://www.amazon.com/dp/XXXXXXXXXX".
-     AMAZON_URL is the A to Z Animals Copy Coloring Book (hero, menu, FAQ):
-     its "Buy on Amazon" buttons appear and the "in review" messages hide.
-     BOOK_LINKS are the books in the "More TinyTusk books" section: each card
-     switches from "Coming soon" to "Now on Amazon" with a buy button. */
-  const AMAZON_URL = "";
+     "https://www.amazon.com/dp/XXXXXXXXXX". That book's card then switches
+     from its "In review" / "Coming soon" badge to "Now on Amazon" and shows
+     a "Buy on Amazon" button. */
   const BOOK_LINKS = {
-    "color-by-number": "",
-    "abc-tracing": "",
-    "trace-write": "",
+    "az-coloring": "",       // My First A to Z Animals Copy Coloring Book
+    "color-by-number": "",   // TinyTusk A to Z Animals Color by Number
+    "abc-tracing": "",       // TinyTusk ABC Letter Tracing Workbook
+    "trace-write": "",       // Trace & Write the Alphabet
   };
 
-  const outsideBooks = (el) => !el.closest("[data-book]");
-  if (AMAZON_URL) {
-    document.querySelectorAll("[data-buy]").forEach((a) => { if (outsideBooks(a)) a.href = AMAZON_URL; });
-    document.querySelectorAll("[data-prelaunch]").forEach((el) => { el.hidden = true; });
-    document.querySelectorAll("[data-live]").forEach((el) => { el.hidden = false; });
-  }
   document.querySelectorAll("[data-book]").forEach((card) => {
     const url = BOOK_LINKS[card.dataset.book];
     if (!url) return;
@@ -79,8 +71,9 @@
     })),
   };
   const BOOK_TITLES = {
-    "color-by-number": "Color by Number",
-    "abc-tracing": "ABC Letter Tracing Workbook",
+    "az-coloring": "A to Z Animals Copy Coloring Book",
+    "color-by-number": "TinyTusk A to Z Animals Color by Number",
+    "abc-tracing": "TinyTusk ABC Letter Tracing Workbook",
     "trace-write": "Trace & Write the Alphabet",
   };
   document.querySelectorAll(".peek").forEach((btn) => {

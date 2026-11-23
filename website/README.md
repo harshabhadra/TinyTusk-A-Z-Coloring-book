@@ -1,6 +1,6 @@
-# TinyTusk launch website
+# TinyTusk Books website
 
-A static launch page for **My First A to Z Animals: Copy Coloring Book**. Plain HTML, CSS and JavaScript with no build step.
+The TinyTusk Books site: all four books (A to Z Animals Copy Coloring Book and the three TinyTusk Learning Series books). Plain HTML, CSS and JavaScript with no build step.
 
 ```
 website/
@@ -8,13 +8,15 @@ website/
   styles.css      design tokens (book palette) + layout
   app.js          A–Z gallery, page viewer, coloring demo, sign-up form
   assets/
-    cover-front.webp / .jpg   front cover (hero + social share image)
+    cover-front.webp          A to Z Animals Copy Coloring Book cover
+    books/<book>/             cover + 4 preview pages for each Learning Series book
     animals/A–Z.webp          colored animals (gallery, studio reference)
-    pages/*.webp              page previews (viewer, "what's inside")
+    pages/A–Z.webp            A to Z coloring pages (gallery viewer, A to Z book previews)
     lineart/*.png             black & white art for the coloring demo
-    downloads/tinytusk-free-sample-pages.pdf   name page + A, E, L, P
-    downloads/tinytusk-<book>-free-sample.pdf  samples for the other three books
-    books/<book>/                    cover + 4 preview pages per book (More TinyTusk books section)
+    logo/                     logos from brand/ on main (horizontal, stacked, home-screen icon)
+    favicon-32.png, favicon-48.png   round badge
+    og-tinytusk-books.jpg     link-preview image with all four covers
+    downloads/                one free sample PDF per book
 ```
 
 ## Preview locally
@@ -28,9 +30,7 @@ Then open http://localhost:8000.
 ## Before launch: things to fill in
 
 1. **Email sign-up**: in `index.html`, set `data-action="YOUR_FORM_ACTION_URL"` on `#notify-form` to your form endpoint (for example a Formspree URL `https://formspree.io/f/xxxx`, or a Mailchimp/ConvertKit form action). Until then the form validates the email and shows a "sign-ups open soon" message, but sends nothing.
-2. **Buy links on launch day**: at the top of `app.js`, paste each Amazon link:
-   - `AMAZON_URL` is the A to Z Animals Copy Coloring Book. The hero, menu and FAQ switch to "Buy on Amazon".
-   - `BOOK_LINKS` holds the other three books (`color-by-number`, `abc-tracing`, `trace-write`). Each card in "More TinyTusk books" switches from "Coming soon" to "Now on Amazon" with a buy button.
+2. **Buy links**: at the top of `app.js`, paste each book's Amazon link into `BOOK_LINKS` (`az-coloring`, `color-by-number`, `abc-tracing`, `trace-write`). That book's card switches from "In review" / "Coming soon" to "Now on Amazon" with a Buy on Amazon button. Also update the "When and where can I buy them?" FAQ answer.
 3. **Custom domain** (optional): if you move to your own domain, update `og:image` and `og:url` in `index.html` to the new address.
 
 ## Deploy
