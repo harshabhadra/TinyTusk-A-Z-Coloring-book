@@ -1,17 +1,19 @@
 """Full-wrap paperback cover for "Trace & Write the Alphabet": back + spine + front, 0.125 in bleed.
 No new art: the front uses the coloring book's coloured animals (../colored/) in round frames, and
 stroke letters drawn like a tracing page. Warm yellow background so it is easy to tell apart from the
-blue-sky covers of the other two TinyTusk books.
+blue-sky / mint covers of the other TinyTusk books.
 
 Usage: python3 Trace-and-Write-the-Alphabet/src/cover.py -> Trace-and-Write-the-Alphabet/cover.pdf
                                                           (+ Trace-and-Write-the-Alphabet/cover/cover_preview.png)
 Assumed KDP values (confirm with KDP's cover calculator before upload):
   black & white interior, white paper: spine = pages x 0.002252 in; bleed 0.125 in.
-  The spine is only ~0.18 in wide at 80 pages, so it carries no text.
+  Spine text "TinyTusk • Trace & Write the Alphabet" (KDP allows spine text above 79 pages); at ~0.18 in
+  wide the text is small (about 5 pt) after KDP's 0.0625 in clearance on each side.
 """
 import math, os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path[:0] = [HERE, os.path.join(os.path.dirname(os.path.dirname(HERE)), "src")]
+sys.path[:0] = [HERE, os.path.join(os.path.dirname(os.path.dirname(HERE)), "src"),
+                os.path.join(os.path.dirname(os.path.dirname(HERE)), "brand")]
 from reportlab.pdfgen import canvas                 # noqa: E402
 from reportlab.lib.colors import HexColor, white    # noqa: E402
 from reportlab.pdfbase import pdfmetrics            # noqa: E402
@@ -20,7 +22,8 @@ import layout                                       # noqa: E402 (fonts, chdir t
 from layout import CAP                              # noqa: E402
 from palette import PALETTE                         # noqa: E402
 import strokes                                      # noqa: E402
-from pages import PAGES                             # noqa: E402
+import brand                                        # noqa: E402 (../../brand: series lockup, shared back, spine)
+from pages import PAGES, KEY                        # noqa: E402
 
 TRIM_W, TRIM_H, BLEED = 8.5, 11.0, 0.125
 SPINE = round(PAGES * 0.002252, 4)
@@ -173,11 +176,11 @@ class Cover:
                  ("R", 6.05, 9.25, P("Red"))]
         for L, ax, ay, col in spots:
             self.animal_circle(L, FRONT_X0 + ax, ay, 0.78, col)
-        self.badge(FRONT_X0 + SAFE + 0.68, TRIM_Y1 - SAFE - 0.95, 0.66,
+        self.badge(FRONT_X0 + SAFE + 0.68, TRIM_Y1 - SAFE - 1.35, 0.66,
                    [("Ages", "Fredoka-SemiBold", 16), ("3–5", "Fredoka-Bold", 28)], P("Yellow"))
-        self.badge(FRONT_X1 - SAFE - 0.68, TRIM_Y1 - SAFE - 0.95, 0.66,
+        self.badge(FRONT_X1 - SAFE - 0.68, TRIM_Y1 - SAFE - 1.35, 0.66,
                    [(str(PAGES), "Fredoka-Bold", 28), ("pages", "Fredoka-SemiBold", 13)], P("Pink"))
-        self.text("by TinyTusk", cx, TRIM_Y1 - SAFE - 0.05, "Fredoka-SemiBold", 15)
+        brand.front_lockup(self, FRONT_X1, TRIM_Y1, SAFE)
 
     def pencil(self, tip_x, tip_y, length):
         """Simple yellow pencil lying at 35 degrees, tip at (tip_x, tip_y)."""
@@ -199,54 +202,38 @@ class Cover:
         poly([pt(0, 0), pt(0.1, -w * 0.31), pt(0.1, w * 0.31)], INK)
 
     def back(self, thumbs):
-        c = self.c
-        x0, x1 = BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15
-        self.text("Lots of practice, one letter at a time!", BACK_CX, 1.05, "Fredoka-Bold", 25)
-        self.rrect(x0, 1.35, x1, 5.2, 0.25, fill=white)
-        blurb = ["Every letter gets its own full page, first in uppercase",
-                 "and then in lowercase. Six rows on each page go step by",
-                 "step from grey dashed letters, to start dots, to empty",
-                 "lines, so children build confidence as they write."]
-        y = 1.85
-        for line in blurb:
-            self.text(line, BACK_CX, y, "Fredoka-Medium", 15); y += 0.3
-        bullets = ["52 letter pages: A–Z, then a–z",
-                   "Stroke numbers, arrows and start dots",
-                   "Missing letters, what comes next & matching",
-                   "52 first words and 12 short sentences to trace",
-                   "Alphabet animal chart and a certificate",
-                   "Large 8.5 × 11 in pages, for ages 3–5"]
-        y += 0.12
-        for b in bullets:
-            c.setFillColor(P("Orange")); c.setStrokeColor(INK); c.setLineWidth(1.2)
-            c.circle(self.X(x0 + 0.55), self.Y(y - 0.07), 0.07 * PT, stroke=1, fill=1)
-            self.text(b, x0 + 0.75, y, "Fredoka-Medium", 14, anchor="l"); y += 0.29
-        tw = 1.6; th = tw * 11 / 8.5; gap = (x1 - x0 - 4 * tw) / 3
-        for i, path in enumerate(thumbs):
-            tx = x0 + i * (tw + gap); ty = 5.55
-            c.setFillColor(BG2); c.rect(self.X(tx + 0.06), self.Y(ty + th + 0.06), tw * PT, th * PT, stroke=0, fill=1)
-            c.drawImage(ImageReader(path), self.X(tx), self.Y(ty + th), tw * PT, th * PT)
-            c.setStrokeColor(INK); c.setLineWidth(1.5); c.rect(self.X(tx), self.Y(ty + th), tw * PT, th * PT, stroke=1, fill=0)
-        self.text("Inside: pages like these", BACK_CX, 5.55 + th + 0.38, "Fredoka-SemiBold", 13)
-        for k, L in enumerate("KOS"):
-            self.animal_circle(L, x0 + 0.6 + k * 1.75, 9.7, 0.5, [P("Light blue"), P("Orange"), P("Light green")][k])
-        bx1, by1 = BACK_X1 - SAFE, TRIM_Y1 - SAFE              # barcode area (KDP places the barcode here)
-        c.setFillColor(white); c.rect(self.X(bx1 - 2.0), self.Y(by1), 2.0 * PT, 1.2 * PT, stroke=0, fill=1)
-        self.text("TinyTusk", x0, 8.75, "Fredoka-Bold", 16, anchor="l")
+        brand.back(self, KEY, BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15,
+                   "Lots of practice, one letter at a time!",
+                   ["Every letter gets its own full page, first in uppercase",
+                    "and then in lowercase. Six rows on each page go step by",
+                    "step from grey dashed letters, to start dots, to empty",
+                    "lines, so children build confidence as they write."],
+                   ["52 letter pages: A–Z, then a–z",
+                    "Stroke numbers, arrows and start dots",
+                    "Missing letters, what comes next & matching",
+                    "52 first words and 12 short sentences to trace",
+                    "Alphabet animal chart and a certificate",
+                    "Large 8.5 × 11 in pages, for ages 3–5"],
+                   thumbs, "Ages 3–5", shadow=BG2, accent=P("Yellow"), trim_y1=TRIM_Y1, safe=SAFE)
 
+    def spine(self):
+        c = self.c
+        c.setFillColor(BG); c.rect(self.X(BACK_X1 - 0.1), 0, (SPINE + 0.2) * PT, H * PT, stroke=0, fill=1)
+        brand.spine(self, BACK_X1, SPINE_X1, PAGES, "Trace & Write the Alphabet", H)
 
 def build():
     os.makedirs(f"{OUT}/cover", exist_ok=True)
     thumbs = []
-    for n in ("04_upper_A", "38_lower_g", "31_missing_upper", "75_sentences_1"):
+    for n in ("05_upper_A", "39_lower_g", "32_missing_upper", "76_sentences_1"):
         t = f"{OUT}/cover/thumb_{n}"
         subprocess.run(["pdftoppm", "-png", "-r", "150", "-singlefile", f"{OUT}/pages/{n}.pdf", t], check=True)
         thumbs.append(t + ".png")
     c = canvas.Canvas(f"{OUT}/cover.pdf", pagesize=(W * PT, H * PT), initialFontName="Fredoka-Medium")
-    c.setTitle("Trace & Write the Alphabet - cover"); c.setAuthor("TinyTusk")
-    cv = Cover(c); cv.background(); cv.back(thumbs); cv.front()
+    c.setTitle("Trace & Write the Alphabet - cover"); c.setAuthor(brand.IMPRINT)
+    cv = Cover(c); cv.background(); cv.spine(); cv.back(thumbs); cv.front()
     c.showPage(); c.save()
     subprocess.run(["pdftoppm", "-png", "-r", "60", "-singlefile", f"{OUT}/cover.pdf", f"{OUT}/cover/cover_preview"], check=True)
+    brand.render_front(f"{OUT}/cover.pdf", KEY)
     print(f"cover.pdf  {W:.4f} x {H:.4f} in  (spine {SPINE} in for {PAGES} pages)")
 
 

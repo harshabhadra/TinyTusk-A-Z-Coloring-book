@@ -1,5 +1,6 @@
-"""Non-puzzle pages: 1 title, 2 name, 3 how to, 30 certificate, 31-37 answer key, 38 blank.
-Name page and certificate are the A-Z book's own designs (../src/frontmatter.py).
+"""Non-puzzle pages: 1 title, 2 copyright, 3 name, 4 how to, 31 certificate, 32-38 answer key,
+39 color the TinyTusk elephant, 40 more TinyTusk books.
+Certificate is the A-Z book's own design (../src/frontmatter.py); series pages come from ../brand/brand.py.
 Usage: python3 src/extras.py   (run src/puzzle.py first: it writes art/<L>_puzzle.png + numbers)
 """
 import json, math, string, subprocess
@@ -9,6 +10,7 @@ from reportlab.pdfbase import pdfmetrics
 from common import *
 from frontmatter import Front                 # ../src/frontmatter.py
 from puzzle import Puzzle
+import brand                                  # ../brand/brand.py
 
 LETTERS = string.ascii_uppercase
 
@@ -24,7 +26,7 @@ class Extra(Front, Puzzle):
 
     def title_page(self):
         self.border()
-        self.outline_centred("My First", 1.6, 52)
+        self.outline_centred("TinyTusk", 1.6, 52)
         self.outline_centred("A to Z Animals", 2.65, 64)
         self.pill("Color by Number", 3.2)
         self.centred("26 cute baby animals to color by number", 3.95, "Fredoka-Medium", 18)
@@ -33,8 +35,35 @@ class Extra(Front, Puzzle):
         for L, b in zip("BEJW", boxes):
             self.puzzle_pic(L, b)
         self.centred(AGES, 9.62, "Fredoka-Bold", 20)
-        self.c.setFont("Fredoka-Medium", 14)
-        self.c.drawRightString(self.X(7.7), self.Y(10.25), f"by {AUTHOR}")
+        brand.lockup(self, 7.7, 10.3)
+
+    def name_page(self):
+        """The A-Z book's name page, with the TinyTusk elephant as the helper."""
+        c = self.c
+        self.border()
+        self.outline_centred("This book", 1.85, 60)
+        self.outline_centred("belongs to", 2.95, 60)
+        c.setFillColor(PILL_FILL); c.setStrokeColor(INK); c.setLineWidth(3)
+        self.rrect(1.2, 3.35, 7.3, 4.85, 0.4, stroke=1, fill=1)
+        self.line_for_name(1.7, 6.8, 4.45)
+        self.centred("my name", 4.75, "Fredoka-Medium", 12)
+        self.centred("I am ______ years old", 5.55, "Fredoka-SemiBold", 22)
+        c.setStrokeColor(INK); c.setLineWidth(2); c.setDash(6, 4)
+        self.rrect(1.2, 5.95, 7.3, 9.45, 0.3)
+        c.setDash()
+        self.centred("Draw your favorite animal here!", 6.35, "Fredoka-SemiBold", 16)
+        brand.mascot_tip(self, (5.75, 8.0, 7.1, 9.35), "Me? I love lions!", line=True, side="l",
+                         bubble_w=2.0, size=14)
+        self.footer()
+
+    def color_mascot(self):
+        self.border()
+        self.outline_centred("Color the TinyTusk", 1.5, 52)
+        self.outline_centred("elephant!", 2.45, 52)
+        self.image(brand.mascot(line=True), (1.3, 2.8, 7.2, 8.35))
+        brand.mascot_tip(self, (0.95, 8.55, 1.95, 9.55), "Use any colors you like. A rainbow elephant? Yes please!",
+                         line=True, bubble_w=4.6, size=14)
+        self.footer(39)
 
     def how_to(self):
         c = self.c
@@ -95,7 +124,7 @@ class Extra(Front, Puzzle):
             self.image(f"{REPO}/colored/{L}.png", (x0 + 0.15, y0 + 0.15, x1 - 0.15, y1 - 0.6))
             c.setFillColor(INK); c.setFont("Fredoka-Bold", 15)
             c.drawCentredString(self.X((x0 + x1) / 2), self.Y(y1 - 0.25),
-                                f"{L} is for {ANIMALS[L]}  ·  page {4 + ord(L) - 65}")
+                                f"{L} is for {ANIMALS[L]}  ·  page {FIRST_LETTER_PAGE + ord(L) - 65}")
         if len(letters) <= 2:                      # last page: a cheer in the empty half
             self.outline_centred("You did it!", 7.0, 60)
             self.star(W / 2, 8.35, 0.85, 0.38)
@@ -117,9 +146,11 @@ def make(name, fn, *args):
 
 if __name__ == "__main__":
     make("01_title", Extra.title_page)
-    make("02_name", Extra.name_page)
-    make("03_how_to", Extra.how_to)
-    make("30_certificate", Extra.certificate)
+    make("02_copyright", brand.copyright_page, TITLE, False)
+    make("03_name", Extra.name_page)
+    make("04_how_to", Extra.how_to)
+    make("31_certificate", Extra.certificate)
     for k in range(7):
-        make(f"{31 + k}_answers", Extra.answers, LETTERS[4 * k:4 * k + 4], 31 + k)
-    make("38_blank", None)
+        make(f"{32 + k}_answers", Extra.answers, LETTERS[4 * k:4 * k + 4], 32 + k)
+    make("39_color_the_elephant", Extra.color_mascot)
+    make("40_more_books", brand.more_books_page, KEY, False, 40)

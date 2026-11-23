@@ -3,11 +3,12 @@ Reuses the coloring book's front art (cover/front_art_300dpi.png) so the two boo
 Usage: python3 My-First-ABC-Letter-Tracing-Workbook/src/cover.py -> My-First-ABC-Letter-Tracing-Workbook/cover.pdf (+ My-First-ABC-Letter-Tracing-Workbook/cover/cover_preview.png)
 
 Assumed KDP values (confirm with KDP's cover calculator before upload):
-  black & white interior, white paper: spine = pages x 0.002252 in; bleed 0.125 in; no spine text under 80 pages.
+  black & white interior, white paper: spine = pages x 0.002252 in; bleed 0.125 in; no spine text: KDP allows it only above 79 pages.
 """
 import math, os, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path[:0] = [HERE, os.path.join(os.path.dirname(os.path.dirname(HERE)), "src")]
+sys.path[:0] = [HERE, os.path.join(os.path.dirname(os.path.dirname(HERE)), "src"),
+                os.path.join(os.path.dirname(os.path.dirname(HERE)), "brand")]
 from reportlab.pdfgen import canvas                 # noqa: E402
 from reportlab.lib.colors import HexColor, white    # noqa: E402
 from reportlab.pdfbase import pdfmetrics            # noqa: E402
@@ -16,8 +17,9 @@ import layout                                       # noqa: E402 (fonts, chdir t
 from layout import CAP                              # noqa: E402
 from palette import PALETTE                         # noqa: E402
 import strokes                                      # noqa: E402
+import brand                                        # noqa: E402 (../../brand: series lockup, shared back)
+from pages import PAGES, KEY                        # noqa: E402
 
-PAGES = 60
 TRIM_W, TRIM_H, BLEED = 8.5, 11.0, 0.125
 SPINE = round(PAGES * 0.002252, 4)
 W = BLEED + TRIM_W + SPINE + TRIM_W + BLEED
@@ -96,19 +98,12 @@ class Cover:
             p.lineTo(self.X(x), self.Y(9.35 - 0.22 * math.sin(math.pi * i / 40)))
         p.lineTo(self.X(SPINE_X1), self.Y(9.13)); p.lineTo(self.X(SPINE_X1), 0); p.close()
         c.setFillColor(GRASS); c.drawPath(p, stroke=0, fill=1)
-        for fx, fy, col in ((0.9, 10.1, "Yellow"), (1.9, 10.6, "Pink"), (3.0, 10.0, "Yellow"),
-                            (4.1, 10.55, "Pink"), (5.2, 10.05, "Yellow")):
-            for k in range(5):
-                a = math.radians(90 + 72 * k)
-                c.setFillColor(white); c.setStrokeColor(INK); c.setLineWidth(1.2)
-                c.circle(self.X(fx + 0.1 * math.cos(a)), self.Y(fy - 0.1 * math.sin(a)), 0.08 * PT, stroke=1, fill=1)
-            c.setFillColor(HexColor(PALETTE[col])); c.circle(self.X(fx), self.Y(fy), 0.065 * PT, stroke=1, fill=1)
 
     def front(self):
         c = self.c
         c.drawImage(ImageReader("cover/front_art_300dpi.png"), self.X(FRONT_X0), 0, (W - FRONT_X0) * PT, H * PT)
         cx = FRONT_CX
-        self.outlined("My First", cx, 1.0, "Fredoka-Bold", 48, [white], width=6)
+        self.outlined("TinyTusk", cx, 1.0, "Fredoka-Bold", 48, [white], width=6)
         # big ABC drawn as tracing letters
         u = 0.62; gap = 0.42
         ws = [strokes.width(ch) * u for ch in "ABC"]
@@ -125,54 +120,35 @@ class Cover:
         self.badge(FRONT_X1 - SAFE - 0.72, BLEED + SAFE + 0.72, 0.72,
                    [("60", "Fredoka-Bold", 30), ("pages of", "Fredoka-SemiBold", 12), ("practice", "Fredoka-SemiBold", 12)],
                    HexColor(PALETTE["Pink"]))
-        self.text("by TinyTusk", FRONT_X1 - SAFE, TRIM_Y1 - SAFE, "Fredoka-SemiBold", 15, anchor="r")
+        brand.front_lockup(self, FRONT_X1, TRIM_Y1, SAFE)
 
     def back(self, thumbs):
-        c = self.c
-        x0, x1 = BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15
-        self.text("Trace, write & color from A to Z!", BACK_CX, 1.05, "Fredoka-Bold", 27)
-        self.rrect(x0, 1.35, x1, 5.05, 0.25, fill=white)
-        blurb = ["Little hands learn their letters with 26 cute baby",
-                 "animals! Each letter gets two pages: big dashed letters",
-                 "with numbered start dots and arrows, rows of practice,",
-                 "the animal's name to trace, and a picture to color."]
-        y = 1.85
-        for line in blurb:
-            self.text(line, BACK_CX, y, "Fredoka-Medium", 15); y += 0.3
-        bullets = ["Uppercase and lowercase, A to Z",
-                   "Start dots, stroke numbers and arrows",
-                   "Pencil warm-ups: lines, zigzags, waves and loops",
-                   "Trace-the-word and find-the-letter games",
-                   "Large 8.5 × 11 in pages, for ages 3–5"]
-        y += 0.15
-        for b in bullets:
-            c.setFillColor(HexColor(PALETTE["Orange"])); c.setStrokeColor(INK); c.setLineWidth(1.2)
-            c.circle(self.X(x0 + 0.55), self.Y(y - 0.07), 0.07 * PT, stroke=1, fill=1)
-            self.text(b, x0 + 0.75, y, "Fredoka-Medium", 14, anchor="l"); y += 0.3
-        tw = 1.6; th = tw * 11 / 8.5; gap = (x1 - x0 - 4 * tw) / 3
-        for i, path in enumerate(thumbs):
-            tx = x0 + i * (tw + gap); ty = 5.45
-            c.setFillColor(HexColor("#7FB8D3")); c.rect(self.X(tx + 0.06), self.Y(ty + th + 0.06), tw * PT, th * PT, stroke=0, fill=1)
-            c.drawImage(ImageReader(path), self.X(tx), self.Y(ty + th), tw * PT, th * PT)
-            c.setStrokeColor(INK); c.setLineWidth(1.5); c.rect(self.X(tx), self.Y(ty + th), tw * PT, th * PT, stroke=1, fill=0)
-        self.text("Inside: pages like these", BACK_CX, 5.45 + th + 0.38, "Fredoka-SemiBold", 13)
-        bx1, by1 = BACK_X1 - SAFE, TRIM_Y1 - SAFE
-        c.setFillColor(white); c.rect(self.X(bx1 - 2.0), self.Y(by1), 2.0 * PT, 1.2 * PT, stroke=0, fill=1)
-        self.text("TinyTusk", x0, TRIM_Y1 - SAFE - 0.05, "Fredoka-Bold", 16, anchor="l")
-
+        brand.back(self, KEY, BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15,
+                   "Trace, write & color from A to Z!",
+                   ["Little hands learn their letters with 26 cute baby",
+                    "animals! Each letter gets two pages: big dashed letters",
+                    "with numbered start dots and arrows, rows of practice,",
+                    "the animal's name to trace, and a picture to color."],
+                   ["Uppercase and lowercase, A to Z",
+                    "Start dots, stroke numbers and arrows",
+                    "Pencil warm-ups: lines, zigzags, waves and loops",
+                    "Trace-the-word and find-the-letter games",
+                    "Large 8.5 × 11 in pages, for ages 3–5"],
+                   thumbs, "Ages 3–5", shadow=HexColor("#7FB8D3"), trim_y1=TRIM_Y1, safe=SAFE)
 
 def build():
     os.makedirs(f"{OUT}/cover", exist_ok=True)
     thumbs = []
-    for n in ("06_A", "07_A_practice", "18_G", "03_warmup_lines"):
+    for n in ("07_A", "08_A_practice", "19_G", "04_warmup_lines"):
         t = f"{OUT}/cover/thumb_{n}"
         subprocess.run(["pdftoppm", "-png", "-r", "150", "-singlefile", f"{OUT}/pages/{n}.pdf", t], check=True)
         thumbs.append(t + ".png")
     c = canvas.Canvas(f"{OUT}/cover.pdf", pagesize=(W * PT, H * PT), initialFontName="Fredoka-Medium")
-    c.setTitle("My First ABC Letter Tracing Workbook - cover"); c.setAuthor("TinyTusk")
+    c.setTitle("TinyTusk ABC Letter Tracing Workbook - cover"); c.setAuthor(brand.IMPRINT)
     cv = Cover(c); cv.background(); cv.back(thumbs); cv.front()
     c.showPage(); c.save()
     subprocess.run(["pdftoppm", "-png", "-r", "60", "-singlefile", f"{OUT}/cover.pdf", f"{OUT}/cover/cover_preview"], check=True)
+    brand.render_front(f"{OUT}/cover.pdf", KEY)
     print(f"cover.pdf  {W:.4f} x {H:.4f} in  (spine {SPINE} in for {PAGES} pages)")
 
 

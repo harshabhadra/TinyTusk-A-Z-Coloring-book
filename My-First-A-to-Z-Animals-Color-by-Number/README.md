@@ -1,17 +1,19 @@
-# My First A to Z Animals Color by Number
+# TinyTusk A to Z Animals Color by Number
 
 Fourth TinyTusk book: 26 colour-by-number pages made from the A to Z book's existing line art and colour
-specs (no new art). 38 pages, 8.5" × 11", premium color interior (guess), no bleed, ages 4–8 (guess).
+specs (no new art). Part of the TinyTusk Learning Series (shared branding in `../brand/`). 40 pages, 8.5" × 11", premium color interior (guess), no bleed, ages 4–8 (guess).
 
 | Pages | Contents |
 |---|---|
 | 1 | Title page |
-| 2 | "This book belongs to" (A to Z book design) |
-| 3 | How to color by number + the 12 crayons |
-| 4–29 | A–Z: numbered line art + crayon colour key |
-| 30 | "Well done!" certificate |
-| 31–37 | Full-colour answer key (the A to Z book's `colored/` pictures) |
-| 38 | Blank |
+| 2 | Copyright page (TinyTusk Books imprint, logo, mascot) |
+| 3 | "This book belongs to" (A to Z book design, with the TinyTusk elephant) |
+| 4 | How to color by number + the 12 crayons |
+| 5–30 | A–Z: numbered line art + crayon colour key |
+| 31 | "Well done!" certificate |
+| 32–38 | Full-colour answer key (the A to Z book's `colored/` pictures) |
+| 39 | Color the TinyTusk elephant |
+| 40 | More TinyTusk books |
 
 How the numbers are made (`src/puzzle.py`):
 - every region's colour comes from `../specs/<L>.json`, exactly as `../src/color.py` used it for `../colored/<L>.png`
@@ -22,10 +24,11 @@ How the numbers are made (`src/puzzle.py`):
 
 ```bash
 python3 src/puzzle.py      # art/<L>_puzzle.png + art/<L>_numbers.json + pages/A-Z
-python3 src/extras.py      # title, name, how-to, certificate, answer key, blank
+python3 src/extras.py      # title, copyright, name, how-to, certificate, answer key, elephant, more books
 python3 src/interior.py    # interior.pdf + KDP checks (same as ../src/interior.py)
-python3 src/cover.py       # cover.pdf (spine 38 x 0.002347 in, no spine text)
+python3 src/cover.py       # cover.pdf (spine 40 x 0.002347 in, no spine text: KDP allows it only above 79 pages)
 ```
 
 Reuses `../src/layout.py`, `../src/frontmatter.py`, `../src/cover.py`, `../src/palette.py`, `../fonts`, `../clean`,
-`../specs`, `../colored`; nothing outside this folder is changed.
+`../specs`, `../colored`, `../brand`; nothing in the A to Z book is changed.
+To refresh all three series books at once (e.g. after replacing `../brand/logo.png`): `../brand/build_series.sh`.

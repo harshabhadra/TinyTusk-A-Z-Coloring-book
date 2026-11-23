@@ -1,17 +1,17 @@
-"""Assemble interior.pdf (38 pages) and run the same KDP checks as the A-Z book (../src/interior.py).
-Order: 1 title, 2 name, 3 how to, 4-29 letters A-Z, 30 certificate, 31-37 answer key, 38 blank.
+"""Assemble interior.pdf (40 pages) and run the same KDP checks as the A-Z book (../src/interior.py).
+Order: 1 title, 2 copyright, 3 name, 4 how to, 5-30 letters A-Z, 31 certificate, 32-38 answer key,
+39 color the TinyTusk elephant, 40 more TinyTusk books.
 Usage: python3 src/interior.py
 """
 import string, subprocess, tempfile, os
 import numpy as np
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
-from common import BOOK, TITLE, AUTHOR
+from common import BOOK, TITLE, AUTHOR, PAGES
 
-PAGES = 38
 os.chdir(BOOK)
-order = ["01_title", "02_name", "03_how_to"] + list(string.ascii_uppercase) + ["30_certificate"] \
-    + [f"{n}_answers" for n in range(31, 38)] + ["38_blank"]
+order = ["01_title", "02_copyright", "03_name", "04_how_to"] + list(string.ascii_uppercase) + ["31_certificate"] \
+    + [f"{n}_answers" for n in range(32, 39)] + ["39_color_the_elephant", "40_more_books"]
 w = PdfWriter()
 for n in order:
     w.add_page(PdfReader(f"pages/{n}.pdf").pages[0])

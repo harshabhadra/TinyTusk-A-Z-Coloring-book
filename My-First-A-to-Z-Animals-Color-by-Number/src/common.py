@@ -4,12 +4,16 @@ BOOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(BOOK)
 sys.path.insert(0, f"{REPO}/src")
 sys.path.insert(0, f"{BOOK}/src")
+sys.path.insert(0, f"{REPO}/brand")
 import layout                                   # registers fonts (and chdirs to the repo root)
 from layout import Page, W, H, PT, CAP, INK, PILL_FILL, LETTER_FONT, ANIMALS, BORDER
 from palette import PALETTE, ORDER
 
-TITLE = "My First A to Z Animals Color by Number"
-AUTHOR = "TinyTusk"
+TITLE = "TinyTusk A to Z Animals Color by Number"
+AUTHOR = "TinyTusk Books"
+KEY = "color-by-number"                    # this book in ../brand/brand.py BOOKS
+PAGES = 40
+FIRST_LETTER_PAGE = 5                      # A on page 5 ... Z on 30
 AGES = "Ages 4–8"                          # guess
 PAGES_DIR = f"{BOOK}/pages"
 ART_DIR = f"{BOOK}/art"

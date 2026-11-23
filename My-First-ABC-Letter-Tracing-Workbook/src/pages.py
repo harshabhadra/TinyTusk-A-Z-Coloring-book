@@ -10,7 +10,7 @@ import os, random, string, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BOOK = os.path.dirname(HERE)                       # My-First-ABC-Letter-Tracing-Workbook/
-sys.path[:0] = [HERE, os.path.join(os.path.dirname(BOOK), "src")]
+sys.path[:0] = [HERE, os.path.join(os.path.dirname(BOOK), "src"), os.path.join(os.path.dirname(BOOK), "brand")]
 from reportlab.pdfgen import canvas                # noqa: E402
 from reportlab.lib.colors import Color, white, black  # noqa: E402
 from reportlab.pdfbase import pdfmetrics           # noqa: E402
@@ -18,21 +18,24 @@ import layout                                      # noqa: E402  (registers font
 from layout import Page, W, H, PT, CAP, ANIMALS    # noqa: E402
 from frontmatter import Front                      # noqa: E402
 import strokes                                     # noqa: E402
+import brand                                       # noqa: E402  (../../brand: logo, mascot, series pages)
 
 OUT = "My-First-ABC-Letter-Tracing-Workbook/pages"
 INK = black
 GUIDE = Color(0.55, 0.55, 0.55)        # guide lines
 TRACE = Color(0.45, 0.45, 0.45)        # dashed letters
 PILL = Color(0.92, 0.92, 0.92)         # light grey fill (B&W interior, replaces the yellow)
-TITLE = "My First ABC Letter Tracing Workbook"
-AUTHOR = "TinyTusk"
+TITLE = "TinyTusk ABC Letter Tracing Workbook"
+AUTHOR = "TinyTusk Books"
 
-FRONT = ["01_title", "02_name", "03_warmup_lines", "04_warmup_zigzag", "05_warmup_curves"]
-BACK = ["58_review_upper", "59_review_lower", "60_certificate"]
+KEY = "abc-tracing"                     # this book in brand.BOOKS
+FRONT = ["01_title", "02_copyright", "03_name", "04_warmup_lines", "05_warmup_zigzag", "06_warmup_curves"]
+BACK = ["59_review_upper", "60_review_lower", "61_certificate", "62_more_books"]
+PAGES = 62
 
 
 def letter_pages(L):
-    n = 6 + 2 * (ord(L) - ord("A"))
+    n = 7 + 2 * (ord(L) - ord("A"))
     return n, n + 1                     # left page (big letters + animal), right page (practice)
 
 
@@ -248,7 +251,7 @@ class TP(Front):
     # ---- front matter ------------------------------------------------------------------------
     def title_page(self):
         self.border()
-        self.outline_centred("My First ABC", 1.75, 62)
+        self.outline_centred("TinyTusk ABC", 1.75, 62)
         self.header_pill("Letter Tracing Workbook", cy=2.45, size=26)
         self.centred("Trace, write & color the alphabet with 26 baby animals", 3.25, "Fredoka-Medium", 17)
         # a traced "Aa Bb Cc" on a guide
@@ -264,8 +267,7 @@ class TP(Front):
         for L, bx in zip("ABC", boxes):
             self.image(f"clean/{L}.png", bx)
         self.centred("Ages 3–5", 9.0, "Fredoka-Bold", 22)
-        self.c.setFont("Fredoka-Medium", 14)
-        self.c.drawRightString(self.X(7.7), self.Y(10.25), f"by {AUTHOR}")
+        brand.lockup(self, 7.7, 10.3, gray=True)
 
     def name_page(self):
         self.border()
@@ -280,8 +282,8 @@ class TP(Front):
         u = 0.36
         for b in (6.45, 7.75):
             self.guide(0.95, 7.55, b, u)
-        self.image("clean/R.png", (5.9, 8.15, 7.4, 9.5))
-        self.image("clean/F.png", (1.1, 8.4, 2.4, 9.5))
+        brand.mascot_tip(self, (1.0, 8.05, 2.55, 9.55), "Write your name, then let's trace together!",
+                         line=True, bubble_w=3.6, size=16)
         self.footer()
 
     def warmup(self, kind, n):
@@ -403,7 +405,7 @@ class TP(Front):
         for x, y, r in ((1.5, 3.2, 0.32), (7.0, 3.2, 0.32), (1.9, 4.4, 0.2), (6.6, 4.4, 0.2)):
             self.star(x, y, r, r * 0.45, width=2.5)
         self.image("clean/Z.png", (1.0, 8.55, 2.2, 9.45))
-        self.image("clean/A.png", (6.3, 8.55, 7.5, 9.45))
+        self.image(brand.mascot(line=True), (6.3, 8.5, 7.5, 9.45))
         self.footer()
 
     # Front.pill uses the yellow fill; keep the interior black & white
@@ -432,13 +434,15 @@ if __name__ == "__main__":
     todo = [a.upper() for a in sys.argv[1:]]
     if not todo:
         make("01_title", TP.title_page)
-        make("02_name", TP.name_page)
-        make("03_warmup_lines", TP.warmup, "lines", 3)
-        make("04_warmup_zigzag", TP.warmup, "zigzag", 4)
-        make("05_warmup_curves", TP.warmup, "curves", 5)
-        make("58_review_upper", TP.review, True, 58)
-        make("59_review_lower", TP.review, False, 59)
-        make("60_certificate", TP.certificate)
+        make("02_copyright", brand.copyright_page, TITLE)
+        make("03_name", TP.name_page)
+        make("04_warmup_lines", TP.warmup, "lines", 4)
+        make("05_warmup_zigzag", TP.warmup, "zigzag", 5)
+        make("06_warmup_curves", TP.warmup, "curves", 6)
+        make("59_review_upper", TP.review, True, 59)
+        make("60_review_lower", TP.review, False, 60)
+        make("61_certificate", TP.certificate)
+        make("62_more_books", brand.more_books_page, KEY)
         todo = list(string.ascii_uppercase)
     for L in todo:
         build_letter(L)

@@ -1,4 +1,4 @@
-"""TinyTusk "Trace & Write the Alphabet": every interior page (80 pages).
+"""TinyTusk "Trace & Write the Alphabet": every interior page (82 pages, list in page_order()).
 
 A practice-heavy handwriting workbook: one full page per uppercase letter, one per lowercase letter,
 each with six rows that fade from dashed letters -> start dots -> blank lines; then words and short sentences.
@@ -14,7 +14,7 @@ import math, os, random, string, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BOOK = os.path.dirname(HERE)
-sys.path[:0] = [HERE, os.path.join(os.path.dirname(BOOK), "src")]
+sys.path[:0] = [HERE, os.path.join(os.path.dirname(BOOK), "src"), os.path.join(os.path.dirname(BOOK), "brand")]
 from reportlab.pdfgen import canvas                # noqa: E402
 from reportlab.lib.colors import Color, white, black  # noqa: E402
 from reportlab.pdfbase import pdfmetrics           # noqa: E402
@@ -22,6 +22,7 @@ import layout                                      # noqa: E402  (registers font
 from layout import W, H, PT, CAP, ANIMALS          # noqa: E402
 from frontmatter import Front                      # noqa: E402
 import strokes                                     # noqa: E402
+import brand                                       # noqa: E402  (../../brand: logo, mascot, series pages)
 
 OUT = "Trace-and-Write-the-Alphabet/pages"
 INK = black
@@ -29,7 +30,8 @@ GUIDE = Color(0.55, 0.55, 0.55)
 TRACE = Color(0.45, 0.45, 0.45)
 PILL = Color(0.92, 0.92, 0.92)
 TITLE = "Trace & Write the Alphabet"
-AUTHOR = "TinyTusk"
+AUTHOR = "TinyTusk Books"
+KEY = "trace-write"                      # this book in brand.BOOKS
 
 # two simple words per letter for the words section (all lowercase, stroke letters only)
 WORDS = dict(a=("ant", "apple"), b=("bus", "bat"), c=("cat", "cup"), d=("dog", "duck"), e=("egg", "elf"),
@@ -44,22 +46,22 @@ SENTENCES = [("L", "I see a lion."), ("F", "The frog can hop."), ("B", "A bear i
              ("C", "The camel is tall."), ("Z", "A zebra is fast."), ("R", "I hug the rabbit.")]
 
 # ---- page map ----------------------------------------------------------------------------------
-UPPER0 = 4            # A on page 4 ... Z on 29
-LOWER0 = 32           # a on page 32 ... z on 57
-WORDS0 = 62           # 13 pages, two letters each: 62..74
-SENT0 = 75            # 4 pages: 75..78
-PAGES = 80
+UPPER0 = 5            # A on page 5 ... Z on 30
+LOWER0 = 33           # a on page 33 ... z on 58
+WORDS0 = 63           # 13 pages, two letters each: 63..75
+SENT0 = 76            # 4 pages: 76..79
+PAGES = 82
 
 
 def page_order():
-    o = ["01_title", "02_name", "03_chart"]
+    o = ["01_title", "02_copyright", "03_name", "04_chart"]
     o += [f"{UPPER0 + i:02d}_upper_{L}" for i, L in enumerate(string.ascii_uppercase)]
-    o += ["30_review_upper", "31_missing_upper"]
+    o += ["31_review_upper", "32_missing_upper"]
     o += [f"{LOWER0 + i:02d}_lower_{L.lower()}" for i, L in enumerate(string.ascii_uppercase)]
-    o += ["58_review_lower", "59_missing_lower", "60_match_1", "61_match_2"]
+    o += ["59_review_lower", "60_missing_lower", "61_match_1", "62_match_2"]
     o += [f"{WORDS0 + i:02d}_words_{string.ascii_lowercase[2 * i]}{string.ascii_lowercase[2 * i + 1]}" for i in range(13)]
     o += [f"{SENT0 + i:02d}_sentences_{i + 1}" for i in range(4)]
-    o += ["79_certificate", "80_extra_practice"]
+    o += ["80_certificate", "81_extra_practice", "82_more_books"]
     assert len(o) == PAGES
     return o
 
@@ -379,8 +381,7 @@ class TP(Front):
         for L, bx in zip("ABCDE", boxes):
             self.image(f"clean/{L}.png", bx)
         self.centred("Ages 3–5", 9.05, "Fredoka-Bold", 22)
-        self.c.setFont("Fredoka-Medium", 14)
-        self.c.drawRightString(self.X(7.7), self.Y(10.25), f"by {AUTHOR}")
+        brand.lockup(self, 7.7, 10.3, gray=True)
 
     def name_page(self):
         c = self.c
@@ -400,8 +401,8 @@ class TP(Front):
             self.text(t, 1.05, 4.5 + i * 0.42, "Fredoka-Medium", 15)
         self.text("Grown-ups: short, happy sessions work best. Praise effort, not perfection.",
                   W / 2, 7.25, "Fredoka-Medium", 12.5, "c")
-        self.image("clean/K.png", (1.0, 7.6, 2.6, 9.55))
-        self.image("clean/P.png", (3.45, 7.6, 5.05, 9.55))
+        brand.mascot_tip(self, (1.0, 7.65, 2.55, 9.5), "One page a day and you'll soon be an alphabet champion!",
+                         line=True, bubble_w=3.0, size=14)
         self.image("clean/S.png", (5.9, 7.6, 7.5, 9.55))
         self.footer()
 
@@ -428,7 +429,7 @@ class TP(Front):
             fs = self.fit_text(name, "Fredoka-Medium", 11.5, cw - 0.95, 8)
             c.setFont("Fredoka-Medium", fs)
             c.drawString(self.X(bx + 0.92), self.Y(by + 0.92), name)
-        self.footer(3)
+        self.footer(4)
 
     def certificate(self):
         c = self.c
@@ -446,7 +447,7 @@ class TP(Front):
         c.drawCentredString(self.X(2.75), self.Y(8.3), "date")
         c.drawCentredString(self.X(5.75), self.Y(8.3), "signed")
         self.image("clean/L.png", (1.0, 2.6, 2.4, 4.4))
-        self.image("clean/E.png", (6.1, 2.6, 7.5, 4.4))
+        self.image(brand.mascot(line=True), (6.1, 2.6, 7.5, 4.4))
         self.footer()
 
     def extra(self):
@@ -457,7 +458,7 @@ class TP(Front):
         while b + u < 9.6:
             self.guide(0.95, 7.55, b, u)
             b += 3 * u + 0.2
-        self.footer(80)
+        self.footer(81)
 
 
 def make(name, fn, *args):
@@ -483,21 +484,23 @@ if __name__ == "__main__":
     todo = sys.argv[1:]
     if not todo:
         make("01_title", TP.title_page)
-        make("02_name", TP.name_page)
-        make("03_chart", TP.chart)
-        make("30_review_upper", TP.review, True, 30)
-        make("31_missing_upper", TP.missing, True, 31)
-        make("58_review_lower", TP.review, False, 58)
-        make("59_missing_lower", TP.missing, False, 59)
-        make("60_match_1", TP.match, 1, 60)
-        make("61_match_2", TP.match, 2, 61)
+        make("02_copyright", brand.copyright_page, TITLE)
+        make("03_name", TP.name_page)
+        make("04_chart", TP.chart)
+        make("31_review_upper", TP.review, True, 31)
+        make("32_missing_upper", TP.missing, True, 32)
+        make("59_review_lower", TP.review, False, 59)
+        make("60_missing_lower", TP.missing, False, 60)
+        make("61_match_1", TP.match, 1, 61)
+        make("62_match_2", TP.match, 2, 62)
         for i in range(13):
             a, b = string.ascii_lowercase[2 * i], string.ascii_lowercase[2 * i + 1]
             make(f"{WORDS0 + i:02d}_words_{a}{b}", TP.words_page, i, WORDS0 + i)
         for k in range(4):
             make(f"{SENT0 + k:02d}_sentences_{k + 1}", TP.sentences_page, k, SENT0 + k)
-        make("79_certificate", TP.certificate)
-        make("80_extra_practice", TP.extra)
+        make("80_certificate", TP.certificate)
+        make("81_extra_practice", TP.extra)
+        make("82_more_books", brand.more_books_page, KEY)
         todo = list(string.ascii_uppercase + string.ascii_lowercase)
     for ch in todo:
         build_letter(ch)

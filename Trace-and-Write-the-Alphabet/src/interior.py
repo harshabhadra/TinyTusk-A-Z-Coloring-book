@@ -1,4 +1,4 @@
-"""Assemble Trace-and-Write-the-Alphabet/interior.pdf (80 pages, order from pages.page_order()) and check it
+"""Assemble Trace-and-Write-the-Alphabet/interior.pdf (82 pages, order from pages.page_order()) and check it
 against KDP specs: page count/size, fonts embedded, nothing outside the 0.5 in margin, black & white only.
 Same checks as the other TinyTusk books.
 Usage: python3 Trace-and-Write-the-Alphabet/src/interior.py
@@ -18,7 +18,7 @@ order = page_order()
 w = PdfWriter()
 for n in order:
     w.add_page(PdfReader(f"pages/{n}.pdf").pages[0])
-w.add_metadata({"/Title": "Trace & Write the Alphabet", "/Author": "TinyTusk"})
+w.add_metadata({"/Title": "Trace & Write the Alphabet", "/Author": "TinyTusk Books"})
 with open("interior.pdf", "wb") as f:
     w.write(f)
 

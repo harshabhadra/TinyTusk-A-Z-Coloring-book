@@ -145,7 +145,7 @@ class Puzzle(Page):
 
 def build(L):
     info = plan(L)
-    num = 4 + ord(L) - ord("A")
+    num = FIRST_LETTER_PAGE + ord(L) - ord("A")
     pdf = f"{PAGES_DIR}/{L}.pdf"
     c = canvas.Canvas(pdf, pagesize=(W * PT, H * PT), initialFontName="Fredoka-Medium")
     c.setTitle(f"{L} is for {info['animal']}"); c.setAuthor(AUTHOR)

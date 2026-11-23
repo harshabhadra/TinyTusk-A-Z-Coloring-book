@@ -1,6 +1,6 @@
-"""Assemble My-First-ABC-Letter-Tracing-Workbook/interior.pdf (60 pages) and check it against KDP specs.
-Order: 1 title, 2 name, 3-5 pencil warm-ups, 6-57 letters (A on 6-7 as a left/right spread ... Z on 56-57),
-58 uppercase review, 59 lowercase review, 60 certificate.
+"""Assemble My-First-ABC-Letter-Tracing-Workbook/interior.pdf (62 pages) and check it against KDP specs.
+Order: 1 title, 2 copyright, 3 name, 4-6 pencil warm-ups, 7-58 letters (A on 7-8 ... Z on 57-58),
+59 uppercase review, 60 lowercase review, 61 certificate, 62 more TinyTusk books (page lists live in pages.py).
 Checks: page count/size, fonts embedded, nothing outside the 0.5 in margin, black & white only (no colour ink).
 Usage: python3 My-First-ABC-Letter-Tracing-Workbook/src/interior.py
 """
@@ -11,17 +11,20 @@ from pypdf import PdfReader, PdfWriter
 
 BOOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(BOOK)
-PAGES = 60
-order = ["01_title", "02_name", "03_warmup_lines", "04_warmup_zigzag", "05_warmup_curves"]
-for i, L in enumerate(string.ascii_uppercase):
-    n = 6 + 2 * i
-    order += [f"{n:02d}_{L}", f"{n + 1:02d}_{L}_practice"]
-order += ["58_review_upper", "59_review_lower", "60_certificate"]
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pages import FRONT, BACK, PAGES, letter_pages  # noqa: E402
+os.chdir(BOOK)
+order = list(FRONT)
+for L in string.ascii_uppercase:
+    a, b = letter_pages(L)
+    order += [f"{a:02d}_{L}", f"{b:02d}_{L}_practice"]
+order += BACK
 
 w = PdfWriter()
 for n in order:
     w.add_page(PdfReader(f"pages/{n}.pdf").pages[0])
-w.add_metadata({"/Title": "My First ABC Letter Tracing Workbook", "/Author": "TinyTusk"})
+w.add_metadata({"/Title": "TinyTusk ABC Letter Tracing Workbook", "/Author": "TinyTusk Books"})
 with open("interior.pdf", "wb") as f:
     w.write(f)
 

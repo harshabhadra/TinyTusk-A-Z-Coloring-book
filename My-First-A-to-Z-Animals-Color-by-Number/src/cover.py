@@ -2,7 +2,7 @@
 Usage: python3 src/cover.py -> cover.pdf (+ cover/cover_preview.png)
 
 Same assumed KDP values as the A-Z book (confirm with KDP's cover calculator before upload):
-  premium color, white paper: spine = pages x 0.002347 in; bleed 0.125 in; no spine text under 80 pages.
+  premium color, white paper: spine = pages x 0.002347 in; bleed 0.125 in; no spine text: KDP allows it only above 79 pages.
 Front: a big Lion, left half coloured, right half still numbered (shows what the book does).
 """
 import math, os, subprocess, sys
@@ -12,14 +12,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor, white
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.utils import ImageReader
-from common import BOOK, REPO, ART_DIR, PALETTE, CAP, LETTER_FONT, TITLE, AUTHOR
+from common import BOOK, REPO, ART_DIR, PALETTE, CAP, LETTER_FONT, TITLE, AUTHOR, KEY, PAGES, AGES
+import brand                                    # ../brand/brand.py
 from regions import load_clean
 import cv2
 sys.path.insert(0, f"{REPO}/src")
 from cover import Cover as AZCover               # ../src/cover.py: text helpers, badges
 import puzzle
 
-PAGES = 38
 TRIM_W, TRIM_H = 8.5, 11.0
 BLEED = 0.125
 SPINE = round(PAGES * 0.002347, 4)
@@ -94,7 +94,7 @@ class Cover(AZCover):
         c = self.c
         cx = FRONT_CX
         c.setFillColor(BG); c.roundRect(self.X(cx - 3.3), self.Y(4.15), 6.6 * PT, 3.5 * PT, 0.3 * PT, stroke=0, fill=1)
-        self.outlined("My First", cx, 1.05, "Fredoka-Bold", 46, [white], width=6)
+        self.outlined("TinyTusk", cx, 1.05, "Fredoka-Bold", 46, [white], width=6)
         az = [HexColor(PALETTE[k]) for k in ("Red", "Orange", "Yellow", "Light green", "Light blue", "Purple")]
         self.outlined("A to Z", cx, 2.3, LETTER_FONT, 110, [az[0], white, az[1], az[2], white, az[3]], width=7)
         self.outlined("Animals", cx, 3.12, LETTER_FONT, 70, [HexColor(PALETTE["Dark blue"])], width=6)
@@ -137,7 +137,7 @@ class Cover(AZCover):
         self.badge(FRONT_X1 - SAFE - 0.72, TRIM_Y0 + SAFE + 0.72, 0.72,
                    [("26", "Fredoka-Bold", 30), ("pictures +", "Fredoka-SemiBold", 12), ("answer key", "Fredoka-SemiBold", 12)],
                    HexColor(PALETTE["Pink"]))
-        self.text("by TinyTusk", FRONT_X1 - SAFE, TRIM_Y1 - SAFE, "Fredoka-SemiBold", 14, anchor="r")
+        brand.front_lockup(self, FRONT_X1, TRIM_Y1, SAFE)
 
     def crayon(self, x, cy, name, n, length=0.72, h=0.3):
         c = self.c
@@ -154,44 +154,23 @@ class Cover(AZCover):
         c.drawCentredString(self.X(dx), self.Y(cy) - 15 * CAP / 2, str(n))
 
     def back(self):
-        c = self.c
-        x0, x1 = BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15
-        self.text("Match the numbers, color the animals!", BACK_CX, 1.05, "Fredoka-Bold", 25)
-        self.rrect(x0, 1.35, x1, 4.6, 0.25, fill=white, width=2.5)
-        blurb = ["Meet 26 cute baby animals, from a smiling Alligator",
-                 "to a stripy Zebra! Find the number, pick the crayon",
-                 "from the color key, and watch each animal come to life."]
-        y = 1.85
-        for line in blurb:
-            self.text(line, BACK_CX, y, "Fredoka-Medium", 15); y += 0.3
-        bullets = ["26 original baby animals, one for every letter",
-                   "Easy numbers 1 to 5 and big spaces for little hands",
-                   "A crayon color key on every page",
-                   "Full-color answer key at the back",
-                   "How-to page, name page and “Well done!” certificate",
-                   "Large 8.5 × 11 in pages, for ages 4–8"]
-        y += 0.1
-        for b in bullets:
-            c.setFillColor(HexColor(PALETTE["Orange"])); c.setStrokeColor(INK); c.setLineWidth(1.2)
-            c.circle(self.X(x0 + 0.45), self.Y(y - 0.07), 0.07 * PT, stroke=1, fill=1)
-            self.text(b, x0 + 0.65, y, "Fredoka-Medium", 14, anchor="l"); y += 0.3
-        tw = 1.6; th = tw * 11 / 8.5; gap = (x1 - x0 - 4 * tw) / 3
-        for i, name in enumerate(("A", "L", "T", "31_answers")):
-            tx = x0 + i * (tw + gap); ty = 4.95
-            c.setFillColor(HexColor("#7DBFA4")); c.rect(self.X(tx + 0.06), self.Y(ty + th + 0.06), tw * PT, th * PT, stroke=0, fill=1)
-            c.drawImage(ImageReader(f"{COVER_DIR}/thumb_{name}.png"), self.X(tx), self.Y(ty + th), tw * PT, th * PT)
-            c.setStrokeColor(INK); c.setLineWidth(1.5); c.rect(self.X(tx), self.Y(ty + th), tw * PT, th * PT, stroke=1, fill=0)
-        self.text("Inside: 26 color-by-number pages and an answer key", BACK_CX, 4.95 + th + 0.38, "Fredoka-SemiBold", 13)
-        for L, b in (("B", (x0, 8.0, x0 + 1.5, 9.9)), ("G", (x0 + 1.6, 7.75, x0 + 3.1, 9.9)),
-                     ("M", (x0 + 3.2, 8.1, x0 + 4.7, 9.9)), ("O", (x0 + 4.8, 8.0, x0 + 6.1, 9.4))):
-            self.img(cutout(L, f"{REPO}/colored/{L}.png"), b)
-        bx1, by1 = BACK_X1 - SAFE, TRIM_Y1 - SAFE
-        c.setFillColor(white); c.rect(self.X(bx1 - 2.0), self.Y(by1), 2.0 * PT, 1.2 * PT, stroke=0, fill=1)
-        self.text("TinyTusk", x0, TRIM_Y1 - SAFE - 0.05, "Fredoka-Bold", 16, anchor="l")
-
+        thumbs = [f"{COVER_DIR}/thumb_{n}.png" for n in ("A", "L", "T", "32_answers")]
+        brand.back(self, KEY, BACK_X0 + SAFE + 0.15, BACK_X1 - SAFE - 0.15,
+                   "Match the numbers, color the animals!",
+                   ["Meet 26 cute baby animals, from a smiling Alligator",
+                    "to a stripy Zebra! Find the number, pick the crayon",
+                    "from the color key, and watch each animal come to life."],
+                   ["26 original baby animals, one for every letter",
+                    "Easy numbers 1 to 5 and big spaces for little hands",
+                    "A crayon color key on every page",
+                    "Full-color answer key at the back",
+                    "Name page, certificate and a TinyTusk elephant to color",
+                    "Large 8.5 × 11 in pages, for ages 4–8"],
+                   thumbs, AGES.replace("Ages", "Ages"), shadow=HexColor("#7DBFA4"), trim_y1=TRIM_Y1, safe=SAFE,
+                   inside_label="Inside: 26 color-by-number pages and an answer key")
 
 def build():
-    for name in ("A", "L", "T", "31_answers"):
+    for name in ("A", "L", "T", "32_answers"):
         subprocess.run(["pdftoppm", "-png", "-r", "150", "-singlefile", f"{BOOK}/pages/{name}.pdf", f"{COVER_DIR}/thumb_{name}"], check=True)
     pdf = f"{BOOK}/cover.pdf"
     c = canvas.Canvas(pdf, pagesize=(W * PT, H * PT), initialFontName="Fredoka-Medium")
@@ -200,6 +179,7 @@ def build():
     cv.background(); cv.back(); cv.front()
     c.showPage(); c.save()
     subprocess.run(["pdftoppm", "-png", "-r", "60", "-singlefile", pdf, f"{COVER_DIR}/cover_preview"], check=True)
+    brand.render_front(pdf, KEY)
     print(f"cover.pdf  {W:.4f} x {H:.4f} in  (spine {SPINE} in for {PAGES} pages)")
 
 
