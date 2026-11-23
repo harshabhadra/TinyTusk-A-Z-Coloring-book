@@ -20,3 +20,6 @@ python3 TinyTusk-ABC-Letter-Tracing-Workbook/src/interior.py
 (cd TinyTusk-A-to-Z-Animals-Color-by-Number/src && python3 extras.py && python3 interior.py)
 python3 Trace-and-Write-the-Alphabet/src/pages.py
 python3 Trace-and-Write-the-Alphabet/src/interior.py
+
+# A+ Content images (reads the covers and pages above)
+python3 brand/aplus.py

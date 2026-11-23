@@ -12,7 +12,8 @@ Shared by the three series books: `TinyTusk-ABC-Letter-Tracing-Workbook/`, `Trac
 | `series/<book>.png` | Front-cover thumbnails, refreshed by each book's `cover.py` |
 | `brand.py` | Logo placement, shared back-cover layout, spine text, copyright page, "More TinyTusk books" page, mascot speech bubbles |
 | `make_assets.py` | Remakes the cut-outs after a logo file in `logos/` changes |
-| `build_series.sh` | Remakes the cut-outs, then rebuilds all three books' covers (twice, so every series strip has the latest covers) and interiors |
+| `build_series.sh` | Remakes the cut-outs, then rebuilds all three books' covers (twice, so every series strip has the latest covers) interiors and A+ images |
+| `aplus.py`, `aplus/` | Amazon A+ Content images, built from the covers, pages and logo cut-outs (see `aplus/README.md`) |
 
 What every series book gets:
 - **Front:** the round TinyTusk badge (1.25 in) in the bottom-right corner, same spot on every book.
