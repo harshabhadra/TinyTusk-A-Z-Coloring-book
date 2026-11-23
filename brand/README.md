@@ -1,7 +1,7 @@
 # TinyTusk Learning Series branding
 
-Shared by the three series books: `My-First-ABC-Letter-Tracing-Workbook/`, `Trace-and-Write-the-Alphabet/` and
-`My-First-A-to-Z-Animals-Color-by-Number/`. The original A to Z coloring book (repo root) is in KDP review and is
+Shared by the three series books: `TinyTusk-ABC-Letter-Tracing-Workbook/`, `Trace-and-Write-the-Alphabet/` and
+`TinyTusk-A-to-Z-Animals-Color-by-Number/`. The original A to Z coloring book (repo root) is in KDP review and is
 **not** rebuilt with this branding; its cover only appears as a thumbnail in the series strip and promo page.
 
 | File | What it is |

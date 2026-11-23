@@ -31,11 +31,11 @@ YEAR = 2026
 BOOKS = [
     dict(key="az-coloring", cover="cover.pdf", title="My First A to Z Animals", sub="Copy Coloring Book",
          line="Copy & color 26 cute baby animals", ages="Ages 3–8"),
-    dict(key="abc-tracing", cover="My-First-ABC-Letter-Tracing-Workbook/cover.pdf",
+    dict(key="abc-tracing", cover="TinyTusk-ABC-Letter-Tracing-Workbook/cover.pdf",
          title="TinyTusk ABC", sub="Letter Tracing Workbook", line="Trace, write & color A to Z", ages="Ages 3–5"),
     dict(key="trace-write", cover="Trace-and-Write-the-Alphabet/cover.pdf",
          title="Trace & Write", sub="the Alphabet", line="Lots of handwriting practice", ages="Ages 3–5"),
-    dict(key="color-by-number", cover="My-First-A-to-Z-Animals-Color-by-Number/cover.pdf",
+    dict(key="color-by-number", cover="TinyTusk-A-to-Z-Animals-Color-by-Number/cover.pdf",
          title="TinyTusk A to Z Animals", sub="Color by Number", line="Match the numbers, color the animals",
          ages="Ages 4–8"),
 ]
