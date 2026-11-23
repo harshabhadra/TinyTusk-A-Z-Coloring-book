@@ -2,7 +2,7 @@
 
 Images for **KDP → Marketing → A+ Content → Start creating A+ Content** (English). Built by `python3 brand/aplus.py`
 from the books' own covers, pages and art (no new artwork); `brand/build_series.sh` re-runs it at the end.
-Logos come from `brand/aplus/logos/` (Sima's horizontal, stacked, badge and mascot files, white made transparent).
+Logos are the cut-outs of Sima's logo files in `brand/logos/` (made by `brand/make_assets.py`).
 
 | Folder | What's in it |
 |---|---|

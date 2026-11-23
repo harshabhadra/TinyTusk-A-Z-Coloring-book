@@ -11,8 +11,8 @@ Sizes are the image sizes of KDP's A+ Content modules (KDP > Marketing > A+ Cont
   Standard Comparison Chart .................. 150 x 300 (one per book)
 Drawn at 2x, downscaled, saved as JPEG (well under KDP's 2 MB limit).
 
-Built only from the books' own pages, covers and art (no new artwork). Logos come from brand/aplus/logos/ (Sima's horizontal,
-stacked, badge and mascot files); replace a file there and run this script again.
+Built only from the books' own pages, covers and art (no new artwork). Logos are the cut-outs of Sima's logo files that
+brand/make_assets.py makes (brand/logo_wide.png, brand/mascot.png); build_series.sh re-runs this script last.
 A+ rules kept: no prices, reviews, rankings, "best"/"#1", "new", links, or "buy now" style wording.
 """
 import os, string, subprocess, tempfile, sys
@@ -113,11 +113,12 @@ def cutout(path):
 def animal(L): return cutout(f"colored/{L}.png")
 
 
-LOGOS = "brand/aplus/logos"          # Sima's TinyTusk logos (white made transparent); swap files, re-run
+LOGO_FILES = {"horizontal": "brand/logo_wide.png", "stacked": "brand/logo_stacked.png", "badge": "brand/badge.png",
+              "mascot": "brand/mascot.png"}     # transparent cut-outs of Sima's logos, made by brand/make_assets.py
 
 
 def logo_img(kind="horizontal"):
-    im = Image.open(f"{LOGOS}/{kind}.png").convert("RGBA")
+    im = Image.open(LOGO_FILES[kind]).convert("RGBA")
     return im.crop(im.getbbox())
 
 
