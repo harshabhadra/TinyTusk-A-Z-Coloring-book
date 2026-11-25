@@ -51,7 +51,10 @@ def plan(L):
     for r in pre:
         art[d["lab"] == r["id"]] = rgb(r["color"])
     art[d["ink"]] = 0
-    Image.fromarray(art).save(f"{ART_DIR}/{L}_puzzle.png", dpi=(300, 300))
+    # The source art is ~1890 px tall but printed ~6.95 in tall (only ~272 ppi), which KDP flags as low
+    # resolution. The ink is hard-edged, so a 2x nearest-neighbour copy (~545 ppi) looks the same and passes.
+    # Same aspect ratio, so placement() and the number positions (in source px) are unchanged.
+    Image.fromarray(art).resize((w * 2, h * 2), Image.NEAREST).save(f"{ART_DIR}/{L}_puzzle.png", dpi=(600, 600))
     info = dict(animal=d["animal"], key=[[num[c], c] for c in colours], numbers=labels,
                 precolored=len(pre), size=[w, h])
     json.dump(info, open(f"{ART_DIR}/{L}_numbers.json", "w"), indent=1)
